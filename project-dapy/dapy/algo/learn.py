@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from ..core import Pid, Channel, Event, Signal, Message, Algorithm, State
+from ..core import Pid, ProcessSet, Channel, ChannelSet, Event, Signal, Message, Algorithm, State
 
 
 @dataclass(frozen=True)
 class Position:
     origin: Pid
-    neighbors: frozenset[Pid] = field(default_factory=frozenset)
+    neighbors: ProcessSet = field(default_factory=ProcessSet)
     
     def __str__(self) -> str:
         """
@@ -17,42 +17,20 @@ class Position:
 class PositionMsg(Message):
     sender: Pid
     position: Position
-    
-    def __str__(self) -> str:
-        """
-        String representation of the position message.
-        """
-        return f"PositionMsg(@{self.target}, {self.sender}, {self.position})"
 
 @dataclass(frozen=True)
 class Start(Signal):
-    
-    def __str__(self) -> str:
-        """
-        String representation of the start signal.
-        """
-        return f"Start(@{self.target})"
+    pass
 
 
 
 @dataclass(frozen=True)
 class LearnState(State):
     own: Position
-    known_processes: frozenset[Pid] = field(default_factory=frozenset)
-    known_channels: frozenset[Pid] = field(default_factory=frozenset)
+    known_processes: ProcessSet = field(default_factory=ProcessSet)
+    known_channels: ChannelSet = field(default_factory=ChannelSet)
     has_started: bool = False
-    
-    def copy(self, **kwargs) -> 'LearnState':
-        """
-        Create a copy of the state with updated attributes.
-        """
-        return self.__class__(**{**self.__dict__, **kwargs})
 
-    def __str__(self) -> str:
-        """
-        String representation of the state.
-        """
-        return f"{self.pid}: started={self.has_started}, known_proc={{{','.join(str(p) for p in sorted(self.known_processes))}}}, known_chan={{{','.join(str(c) for c in sorted(self.known_channels))}}})"
         
 @dataclass(frozen=True)
 class LearnGraphAlgorithm(Algorithm):
@@ -69,14 +47,11 @@ class LearnGraphAlgorithm(Algorithm):
             ),
             has_started=False,
         )
-        
-    def on_start(self, init_state: LearnState) -> tuple[LearnState, list[Event]]:
-        return init_state, []
     
     def on_event(self, old_state: LearnState, event: Event) -> tuple[LearnState, list[Event]]:
         match event:
             case Start(_) if not old_state.has_started:
-                return self.do_start(old_state)
+                return self._do_start(old_state)
             case Start(_):
                 return old_state, []
             case PositionMsg(_, _, position) if position.origin in old_state.known_processes:
@@ -86,11 +61,11 @@ class LearnGraphAlgorithm(Algorithm):
                 new_events = []
                 # start the process if it has not started yet
                 if not new_state.has_started:
-                    new_state, new_events = self.do_start(new_state)
+                    new_state, new_events = self._do_start(new_state)
                 # add the new position to the state
                 new_state = new_state.copy(
-                    known_processes=new_state.known_processes | frozenset({ position.origin }),
-                    known_channels=new_state.known_channels | frozenset({ Channel(position.origin, neighbor) for neighbor in position.neighbors }),
+                    known_processes=new_state.known_processes + position.origin,
+                    known_channels=new_state.known_channels + ChannelSet( Channel(position.origin, neighbor) for neighbor in position.neighbors ),
                 )
                 # send the position to all neighbors except the sender
                 new_events = new_events + [
@@ -103,7 +78,7 @@ class LearnGraphAlgorithm(Algorithm):
                 # Handle other events
                 raise NotImplementedError(f"Event {event} not implemented in {self.name}")
             
-    def do_start(self, state: LearnState) -> tuple[LearnState, list[Event]]:
+    def _do_start(self, state: LearnState) -> tuple[LearnState, list[Event]]:
         """
         Handle the start of the algorithm.
         """
@@ -113,8 +88,8 @@ class LearnGraphAlgorithm(Algorithm):
             for neighbor in state.own.neighbors
         ]
         state = state.copy(
-            known_processes=frozenset({state.own.origin}),
-            known_channels=frozenset( Channel(state.own.origin, neighbor) for neighbor in state.own.neighbors ),
+            known_processes=ProcessSet(state.own.origin),
+            known_channels=ChannelSet( Channel(state.own.origin, neighbor) for neighbor in state.own.neighbors ),
             has_started=True,
         )
         return state, events
