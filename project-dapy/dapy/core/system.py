@@ -20,7 +20,7 @@ class SynchronyType(Enum):
 class SynchronyModel(ABC):
     min_delay: timedelta = field(default=timedelta.resolution)
     def __post_init__(self):
-        if self.min_delay <= timedelta.resolution:
+        if self.min_delay < timedelta.resolution:
             raise ValueError("Minimum delay must be strictly positive.")
         
     @abstractmethod
@@ -110,7 +110,7 @@ class StochasticExponential(SynchronyModel):
     
     def __post_init__(self):
         super().__post_init__()
-        if self.delta_t <= timedelta.resolution:
+        if self.delta_t < timedelta.resolution:
             raise ValueError("Delta time must be strictly positive.")
     def get_type() -> SynchronyType:
         return SynchronyType.PARTIALLY_SYNCHRONOUS
