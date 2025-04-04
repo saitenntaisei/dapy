@@ -8,6 +8,16 @@ class Event(ABC):
     Abstract class to represent an event in the system.
     """
     target: Pid
+    
+    def __str__(self) -> str:
+        """
+        String representation of the start signal.
+        """
+        other_attributes = ', '.join(f"{k}={str(v)}" for k,v in self.__dict__.items() if k != 'target' and v is not None)
+        if other_attributes:
+            other_attributes = "; " + other_attributes
+        return f"{self.__class__.__name__}(@{self.target}{other_attributes})"
+        
 
 @dataclass(frozen=True)
 class Signal(Event):
