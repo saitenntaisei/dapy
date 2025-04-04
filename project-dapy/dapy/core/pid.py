@@ -1,4 +1,6 @@
 from dataclasses import dataclass, field
+from typing import Iterable
+
 
 @dataclass(frozen=True, order=True)
 class Pid:
@@ -9,6 +11,38 @@ class Pid:
     
     def __str__(self):
         return f"p{self.id}"
+
+
+@dataclass(frozen=True)
+class ProcessSet:
+    """
+    Class to represent a set of processes.
+    """
+    processes: frozenset[Pid] = field(default_factory=frozenset)
+    
+    def __init__(self, processes: Iterable[Pid] | Pid = frozenset()):
+        if isinstance(processes, Pid):
+            processes = {processes}
+        object.__setattr__(self, 'processes', frozenset(processes))
+    def __str__(self):
+        return f"{{{','.join(str(p) for p in sorted(self.processes))}}}"
+    def __contains__(self, pid: Pid) -> bool:
+        return pid in self.processes
+    def __len__(self) -> int:
+        return len(self.processes)
+    def __iter__(self):
+        return iter(self.processes)
+    def __eq__(self, other):
+        if not isinstance(other, ProcessSet):
+            return False
+        return self.processes == other.processes
+    def __add__(self, other):
+        if isinstance(other, Pid):
+            return ProcessSet(processes=self.processes.union({other}))
+        elif isinstance(other, ProcessSet):
+            return ProcessSet(processes=self.processes.union(other.processes))
+        else:
+            raise TypeError("Cannot join ProcessSet with non-ProcessSet object")
 
 
 @dataclass(frozen=True, order=True)
@@ -61,18 +95,35 @@ class Channel:
             return (self.s, self.r)
         else:
             return (self.r, self.s)
+
+
+@dataclass(frozen=True)
+class ChannelSet:
+    """
+    Class to represent a set of channels.
+    """
+    channels: frozenset[Channel] = field(init=False)
     
-    
-if __name__ == "__main__":
-    p1 = Pid(1)
-    p2 = Pid(2)
-    p3 = Pid(3)
-    p4 = Pid(4)
-    
-    c1 = Channel(p1, p2, directed=False)
-    c2 = Channel(p2, p1)
-    c3 = Channel(p1, p3)
-    c4 = Channel(p3, p1)
-    
-    print(c1.__cmp__(c2))  # Should be equal
-    print(c1.__cmp__(c3))  # c1 Should be smaller
+    def __init__(self, channels: Iterable[Channel] | Channel = frozenset()):
+        if isinstance(channels, Channel):
+            channels = {channels}
+        object.__setattr__(self, 'channels', frozenset(channels))
+    def __str__(self):
+        return f"{{{','.join(str(c) for c in sorted(self.channels))}}}"
+    def __contains__(self, channel: Channel) -> bool:
+        return channel in self.channels
+    def __len__(self) -> int:
+        return len(self.channels)
+    def __iter__(self):
+        return iter(self.channels)
+    def __eq__(self, other):
+        if not isinstance(other, ChannelSet):
+            return False
+        return self.channels == other.channels
+    def __add__(self, other):
+        if isinstance(other, Channel):
+            return ChannelSet(channels=self.channels.union({other}))
+        elif isinstance(other, ChannelSet):
+            return ChannelSet(channels=self.channels.union(other.channels))
+        else:
+            raise TypeError("Cannot join ChannelSet with non-ChannelSet object")
