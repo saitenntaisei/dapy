@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 from .pid import Pid
-from .system import Synchrony, System
+from .system import SynchronyModel, System
 from .event import Event
 
 
