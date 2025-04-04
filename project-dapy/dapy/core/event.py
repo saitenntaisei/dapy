@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 from .pid import Pid
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Event(ABC):
     """
     Abstract class to represent an event in the system.
