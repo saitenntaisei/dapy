@@ -1,0 +1,24 @@
+[project]
+name = "dapy"
+version = "0.1.0"
+description = "A Python package simulating distributed algorithms."
+authors = [
+    {name = "Xavier Défago", email = "defago@c.titech.ac.jp"},
+]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+
+keywords = ["distributed", "algorithms", "simulation"]
+
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+# packages = [
+#     {include = "dapy"},
+# ]
+
+# [tool.setuptools.packages.find]
+# where = ["src"]
+# # This is a workaround for the issue with setuptools.find_packages() not finding packages in src
+
