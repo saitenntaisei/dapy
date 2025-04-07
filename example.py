@@ -3,13 +3,12 @@ from dapy.algo.learn import LearnGraphAlgorithm, Start
 from dapy.sim import Simulator, Settings
 from datetime import timedelta
 
-print('\n' * 5)
 
 # Example usage
 settings = Settings(enable_trace=True)
 
 system = System(
-    topology=Ring.of_size(5),
+    topology=Ring.of_size(4),
     synchrony=Asynchronous(),
 )
 print("System:")
@@ -24,13 +23,14 @@ sim.start()
 sim.schedule_event(timedelta(seconds=0), Start(target=Pid(1)))
 sim.run_to_completion()
 
-print("------")
-print("Trace:")
+print('\n' * 5)
+
+print("----[ Trace ]---- configuration history")
 for event in sim.trace.history:
     time = event.time
     event = event.configuration
     print(f"{time} {event}")
-print("------")
+print("----[ Trace ]---- ")
 for timed_event in sim.trace.events_list:
     start = timed_event.start
     end = timed_event.end
