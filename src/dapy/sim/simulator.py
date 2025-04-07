@@ -25,9 +25,10 @@ class Simulator:
     algorithm: Algorithm
     current_configuration: Configuration
     current_time: timedelta = field(default=timedelta(seconds=0))
-    scheduled_events: list[TimedEvent] = field(default_factory=list)
     settings: Settings = field(default_factory=Settings)
     trace: Optional[Trace] = field(default=None)
+    scheduled_events: list[TimedEvent] = field(default_factory=list, init=False)
+    
     
     def __post_init__(self):
         """
