@@ -82,6 +82,44 @@ class Ring(NetworkTopology):
         return cls.from_((Pid(i+1) for i in range(size)), directed=directed)
 
 
+@dataclass(frozen=True)
+class Star(NetworkTopology):
+    _center: Pid
+    _leaves: frozenset[Pid]
+    
+    def __post_init__(self):
+        if len(self._leaves) < 1:
+            raise ValueError("A star topology must have at least one leaf.")
+        if self._center in self._leaves:
+            raise ValueError("Center cannot be a leaf.")
+        
+    def neighbors_of(self, pid: Pid) -> frozenset[Pid]:
+        if pid == self._center:
+            return self._leaves
+        if pid in self._leaves:
+            return frozenset({self._center})
+        raise ValueError(f"Process {pid} not found in the star topology.")
+
+    def processes(self) -> frozenset[Pid]:
+        return frozenset([self._center]) | self._leaves
+    
+    @classmethod
+    def from_(cls, center: Pid, leaves: Iterable[Pid]) -> 'Star':
+        leaves = frozenset(leaves)
+        return cls(center, leaves)
+    
+    @classmethod
+    def of_size(cls, size: int) -> 'Star':
+        """
+        Create a star topology with the given size.
+        """
+        if size <= 1:
+            raise ValueError("Size must be greater than 1.")
+        center = Pid(1)
+        leaves = (Pid(i+2) for i in range(size - 1))
+        return cls.from_(center, leaves)
+
+
 if __name__ == "__main__":
     # Example usage
     topology = Ring.from_({Pid(1), Pid(2), Pid(3)}, directed=True)
