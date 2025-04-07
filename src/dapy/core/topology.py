@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from .pid import Pid
 from typing import Iterable
+from .pid import Pid
+
 
 @dataclass(frozen=True)
 class NetworkTopology(ABC):

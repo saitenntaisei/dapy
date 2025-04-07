@@ -2,14 +2,10 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Iterable
 
+from ..core import Pid, Event, Message, Signal, System, Algorithm
 from .configuration import Configuration
-from ..core.event import Event, Message, Signal
-from ..core.system import System
-from ..core.algorithm import Algorithm
-from .timed import TimedEvent, TimedConfiguration
-from ..core.pid import Pid
+from .timed import TimedConfiguration
 
-import json
 
 @dataclass(frozen=True, order=True)
 class LocalTimedEvent:

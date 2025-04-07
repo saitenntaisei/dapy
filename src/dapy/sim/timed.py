@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
+from abc import ABC
 from datetime import timedelta
 
-from ..core.event import Event
+from ..core import Event
 from .configuration import Configuration
 
 

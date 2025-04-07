@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from .pid import Pid
 from typing import Iterable
-from .topology import NetworkTopology
 from enum import Enum
 from datetime import timedelta, time
 import random
+from .pid import Pid
+from .topology import NetworkTopology
+
 
 class SynchronyType(Enum):
     """

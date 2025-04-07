@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
-from abc import ABC, abstractmethod
+from abc import ABC
 from .pid import Pid
+
 
 @dataclass(frozen=True, order=True)
 class Event(ABC):

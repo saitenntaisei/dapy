@@ -1,6 +1,5 @@
-from dapy.core import Pid
-from dapy.core import System, Ring, Asynchronous
-from dapy.algo.learn import *
+from dapy.core import Pid, System, Ring, Asynchronous
+from dapy.algo.learn import LearnGraphAlgorithm, Start
 from dapy.sim import Simulator, Settings
 from datetime import timedelta
 
@@ -24,8 +23,6 @@ sim = Simulator.from_system(system, algorithm, settings=settings)
 sim.start()
 sim.schedule_event(timedelta(seconds=0), Start(target=Pid(1)))
 sim.run_to_completion()
-print(f"Final configuration (finished: {sim.is_finished()}):")
-print(sim.current_configuration)
 
 print("------")
 print("Trace:")
@@ -39,6 +36,9 @@ for timed_event in sim.trace.events_list:
     end = timed_event.end
     event = timed_event.event
     print(f"{start} {end} {event}")
-    
+
+print(f"Final configuration (finished: {sim.is_finished()}):")
+print(sim.current_configuration)
+
 
 

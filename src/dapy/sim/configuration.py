@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Iterable
-
-from ..core.algorithm import State
-from ..core.pid import Pid
+from ..core import Pid, State
 
 
 @dataclass(frozen=True)

@@ -3,10 +3,7 @@ from datetime import timedelta
 from typing import Optional
 import heapq
 
-
-from ..core.system import System
-from ..core.algorithm import Algorithm
-from ..core.event import Event, Message
+from ..core import System, Algorithm, Event, Message
 from .configuration import Configuration
 from .timed import TimedEvent 
 from .settings import Settings
