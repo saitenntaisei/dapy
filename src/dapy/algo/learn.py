@@ -26,7 +26,6 @@ class Position:
 #
 @dataclass(frozen=True)
 class PositionMsg(Message):
-    sender: Pid
     position: Position
 
 @dataclass(frozen=True)
