@@ -7,26 +7,12 @@ from ..core import Pid, ProcessSet, Channel, ChannelSet, Event, Signal, Message,
 
 
 #
-# Custom data structure used in the algorithm.
-#
-@dataclass(frozen=True)
-class Position:
-    origin: Pid
-    neighbors: ProcessSet = field(default_factory=ProcessSet)
-    
-    def __str__(self) -> str:
-        """
-        String representation of the position.
-        """
-        return f"Position({self.origin}, {{{','.join(str(p) for p in sorted(self.neighbors))}}})"
-
-
-#
 # Messages and signals used in the algorithm.
 #
 @dataclass(frozen=True)
 class PositionMsg(Message):
-    position: Position
+    origin: Pid
+    neighbors: ProcessSet = field(default_factory=ProcessSet)
 
 @dataclass(frozen=True)
 class Start(Signal):
@@ -44,10 +30,10 @@ class GraphIsKnown(Signal):
 #
 @dataclass(frozen=True)
 class LearnState(State):
-    own: Position
-    known_processes: ProcessSet = field(default_factory=ProcessSet)
-    known_channels: ChannelSet = field(default_factory=ChannelSet)
-    has_started: bool = False
+    neighbors_i: ProcessSet = field(default_factory=ProcessSet)
+    proc_known_i: ProcessSet = field(default_factory=ProcessSet)
+    channels_known_i: ChannelSet = field(default_factory=ChannelSet)
+    part_i: bool = False
 
 
 
@@ -73,11 +59,8 @@ class LearnGraphAlgorithm(Algorithm):
     def initial_state(self, pid) -> State:
         return LearnState(
             pid=pid,
-            own=Position(
-                origin=pid,
-                neighbors=self.system.topology.neighbors_of(pid)
-            ),
-            has_started=False,
+            neighbors_i=self.system.topology.neighbors_of(pid),
+            part_i=False,
         )
     
     #
@@ -86,56 +69,61 @@ class LearnGraphAlgorithm(Algorithm):
     # return the new state of the process and a list of events to be scheduled.
     #
     def on_event(self, old_state: LearnState, event: Event) -> tuple[LearnState, list[Event]]:
+        
         match event:
+            
             # () when Start() is received do
             # (5)     if (not part_i) then start() end if            
-            case Start(_) if not old_state.has_started:
-                if not old_state.has_started:
+            case Start(_) if not old_state.part_i:
+                if not old_state.part_i:
                     return self._do_start(old_state)
                 else:
                     # do nothing
                     return old_state, []
+                
             # () when Position(id, neighbors) is received from neighbor id_x do
-            case PositionMsg(_, sender, position):
+            case PositionMsg(_, id_x, id, neighbors):
                 new_state = old_state
                 new_events = []
                 # (6) if (not part_i) then start() end if
-                if not new_state.has_started:
+                if not new_state.part_i:
                     new_state, new_events = self._do_start(new_state)
 
                 # (7) if id not in proc_known_i then                    
-                if position.origin not in new_state.known_processes:
+                if id not in new_state.proc_known_i:
                     # (8) proc_known_i := proc_known_i ∪ {id}
                     # (9) channels_known_i := channel_known_i ∪ {<id, id_k> | id_k in neighbors>}
                     # add the new position to the state
                     new_state = new_state.cloned_with(
-                        known_processes=new_state.known_processes + position.origin,
-                        known_channels=new_state.known_channels + ChannelSet( Channel(position.origin, neighbor) for neighbor in position.neighbors ),
+                        proc_known_i=new_state.proc_known_i + id,
+                        channels_known_i=new_state.channels_known_i + ChannelSet( Channel(id, neighbor) for neighbor in neighbors ),
                     )
                     # (10) for each id_y in neighbors_i \ {id_x} do
                     # (11)  send POSITION(id, neighbors) to id_y
                     # (12) end for
                     # send the position to all neighbors except the sender
                     new_events = new_events + [
-                        PositionMsg(target=neighbor, sender=old_state.pid, position=position)
-                        for neighbor in old_state.own.neighbors
-                        if neighbor != sender
+                        PositionMsg(target=neighbor, sender=old_state.pid, origin=id, neighbors=neighbors)
+                        for neighbor in old_state.neighbors_i
+                        if neighbor != id_x
                     ]
                     # (13) if forall<id_j, id_k> in channels_known_i : {id_j, id_k} in proc_known_i) then
                     # (14)    p_i knowns the communication graph
                     # (15) end if
                     if all(
-                        c_jk.r in new_state.known_processes and c_jk.s in new_state.known_processes
-                        for c_jk in new_state.known_channels
+                        c_jk.r in new_state.proc_known_i and c_jk.s in new_state.proc_known_i
+                        for c_jk in new_state.channels_known_i
                     ):
                         new_events.append(GraphIsKnown(target=new_state.pid))
                     
                 # return the new states and all send events
                 return new_state, new_events
+            
             case GraphIsKnown(_):
                 # Handle the graph known event
                 print(f"Graph is known for {old_state.pid}")
                 return old_state, []
+            
             case _:
                 # Handle other events
                 raise NotImplementedError(f"Event {event} not implemented in {self.name}")
@@ -155,13 +143,13 @@ class LearnGraphAlgorithm(Algorithm):
         Handle the start of the algorithm.
         """
         events = [
-            PositionMsg(target=neighbor, sender=state.own.origin, position=state.own)
-            for neighbor in state.own.neighbors
+            PositionMsg(target=neighbor, sender=state.pid, origin=state.pid, neighbors=state.neighbors_i)
+            for neighbor in state.neighbors_i
         ]
         state = state.cloned_with(
-            known_processes=ProcessSet(state.own.origin),
-            known_channels=ChannelSet( Channel(state.own.origin, neighbor) for neighbor in state.own.neighbors ),
-            has_started=True, # part_i <- true
+            proc_known_i=ProcessSet(state.pid),
+            channels_known_i=ChannelSet( Channel(state.pid, neighbor) for neighbor in state.neighbors_i ),
+            part_i=True, # part_i <- true
         )
         return state, events
 
