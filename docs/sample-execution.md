@@ -5,6 +5,12 @@
 
 ## How to define an execution
 
+There are three main components necessary to define an execution:
+* `System` that defines the network topology and the synchrony model
+* `Algorithm` (subclass) the algorithm to execute (e.g., [`LearnGraphAlgorithm`](sample-algorithm.md) defined in the first part)
+* `Simulator` that is in charge of running the simulation and collecting information about it.
+
+The example below is configured to generate a trace of the execution. The trace contains all subsequent configurations from the initial configuration until the end of the execution. A configuration is a collection of states; one for each process. The trace also keeps track of all events generated during the execution, with the creation time (simulation time) of the event and the time to be scheduled. These times are identical in the case of signals, but correspond to the sending and receive time in the case of messages.
 
 ```python
 from dapy.core import Pid, System, Ring, Asynchronous
@@ -89,3 +95,4 @@ for i in range(len(sim.trace.history)-1):
 # The format is `hour:minute:second.decimals`.
 #
 ```
+
