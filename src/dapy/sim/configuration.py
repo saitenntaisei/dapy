@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, Self
 from ..core import Pid, State
 
 
@@ -15,6 +15,18 @@ class Configuration:
         updated_states = {pid: new_states.get(pid, state) for pid, state in self.states.items()}
         return Configuration(updated_states)
 
+    def processes(self) -> Iterable[Pid]:
+        """
+        Get the PIDs of all processes in the configuration.
+        """
+        return sorted(self.states.keys())
+    
+    def changed_from(self, other: Self) -> Iterable[Pid]:
+        """
+        Get the PIDs of processes that have changed between two configurations.
+        """
+        return (pid for pid in self.processes() if pid in other and self.states[pid] != other.states[pid])
+    
     def __getitem__(self, pid: Pid) -> State:
         """
         Get the state of a process by its PID.
@@ -27,7 +39,7 @@ class Configuration:
         """
         return pid in self.states
 
-    def __iter__(self):
+    def __iter__(self) -> Iterable[State]:
         """
         Iterate over the states in the configuration.
         """
