@@ -41,6 +41,8 @@ class ProcessSet:
             return ProcessSet(processes=self.processes.union({other}))
         elif isinstance(other, ProcessSet):
             return ProcessSet(processes=self.processes.union(other.processes))
+        elif isinstance(other, Iterable):
+            return ProcessSet(processes=self.processes.union(other))
         else:
             raise TypeError("Cannot join ProcessSet with non-ProcessSet object")
 
@@ -125,5 +127,7 @@ class ChannelSet:
             return ChannelSet(channels=self.channels.union({other}))
         elif isinstance(other, ChannelSet):
             return ChannelSet(channels=self.channels.union(other.channels))
+        elif isinstance(other, Iterable):
+            return ChannelSet(channels=self.channels.union(other))
         else:
             raise TypeError("Cannot join ChannelSet with non-ChannelSet object")
