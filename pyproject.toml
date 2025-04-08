@@ -14,11 +14,8 @@ keywords = ["distributed", "algorithms", "simulation"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-# packages = [
-#     {include = "dapy"},
-# ]
 
-# [tool.setuptools.packages.find]
-# where = ["src"]
-# # This is a workaround for the issue with setuptools.find_packages() not finding packages in src
-
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
