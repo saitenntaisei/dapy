@@ -87,10 +87,15 @@ class LearnGraphAlgorithm(Algorithm):
     #
     def on_event(self, old_state: LearnState, event: Event) -> tuple[LearnState, list[Event]]:
         match event:
+            # () when Start() is received do
+            # (5)     if (not part_i) then start() end if            
             case Start(_) if not old_state.has_started:
-                return self._do_start(old_state)
-            case Start(_):
-                return old_state, []
+                if not old_state.has_started:
+                    return self._do_start(old_state)
+                else:
+                    # do nothing
+                    return old_state, []
+            # () when Position(id, neighbors) is received from neighbor id_x do
             case PositionMsg(_, sender, position):
                 new_state = old_state
                 new_events = []
@@ -139,11 +144,16 @@ class LearnGraphAlgorithm(Algorithm):
     # Custom method defined for modularity.
     # Corresponds to the start() method in the pseudo-code of the algorithm.
     #
+    # () operation start() is
+    # (1)    for each id_j in neighbors_i do
+    # (2)        send POSITION(id, neighbors) to id_j
+    # (3)    end for
+    # (4)    part_i <- true
+    # (5) end operation
     def _do_start(self, state: LearnState) -> tuple[LearnState, list[Event]]:
         """
         Handle the start of the algorithm.
         """
-        # Send a message to all neighbors with the current position
         events = [
             PositionMsg(target=neighbor, sender=state.own.origin, position=state.own)
             for neighbor in state.own.neighbors
@@ -151,7 +161,7 @@ class LearnGraphAlgorithm(Algorithm):
         state = state.cloned_with(
             known_processes=ProcessSet(state.own.origin),
             known_channels=ChannelSet( Channel(state.own.origin, neighbor) for neighbor in state.own.neighbors ),
-            has_started=True,
+            has_started=True, # part_i <- true
         )
         return state, events
 
