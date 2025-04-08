@@ -13,12 +13,21 @@ class Algorithm(ABC):
     """
     system: System
 
+    #
+    # Optional method: return the name of the algorithm.
+    # Override this method if you want to provide a specific name for the algorithm.
+    # By default, it returns the class name.
+    #
+    @property
     def name(self) -> str:
         """
         Return the name of the algorithm.
         """
         return type(self).__name__
     
+    #
+    # Mandatory method: given a process id, create and return the initial state of that process.
+    #
     @abstractmethod
     def initial_state(self, pid: Pid) -> State:
         """
@@ -26,12 +35,21 @@ class Algorithm(ABC):
         """
         pass
     
+    #
+    # Optional method: handle the start of the algorithm.
+    # Override this method only if your algorithms needs to do something specific at the start of the execution.
+    #
     def on_start(self, init_state: State) -> tuple[State, list[Event]]:
         """
         Handle the start of the algorithm.
         """
         return init_state, []
     
+    #
+    # Mandatory method:
+    # given the state of a process and an event (signal or message) applied to it,
+    # return the new state of the process and a list of events to be scheduled.
+    #    
     @abstractmethod
     def on_event(self, old_state: State, event: Event) -> tuple[State, list[Event]]:
         """

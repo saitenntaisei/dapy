@@ -6,6 +6,9 @@ from dataclasses import dataclass, field
 from ..core import Pid, ProcessSet, Channel, ChannelSet, Event, Signal, Message, Algorithm, State
 
 
+#
+# Custom data structure used in the algorithm.
+#
 @dataclass(frozen=True)
 class Position:
     origin: Pid
@@ -16,7 +19,11 @@ class Position:
         String representation of the position.
         """
         return f"Position({self.origin}, {{{','.join(str(p) for p in sorted(self.neighbors))}}})"
-    
+
+
+#
+# Messages and signals used in the algorithm.
+#
 @dataclass(frozen=True)
 class PositionMsg(Message):
     sender: Pid
@@ -32,6 +39,10 @@ class GraphIsKnown(Signal):
     pass
 
 
+
+#
+# State of a process in the algorithm.
+#
 @dataclass(frozen=True)
 class LearnState(State):
     own: Position
@@ -39,13 +50,27 @@ class LearnState(State):
     known_channels: ChannelSet = field(default_factory=ChannelSet)
     has_started: bool = False
 
-        
+
+
+#
+# The algorithm itself.
+# 
 @dataclass(frozen=True)
 class LearnGraphAlgorithm(Algorithm):
     """
     This algorithm learns the topology of the network.
     """
     
+    @property
+    def name(self) -> str:
+        """
+        Return the name of the algorithm.
+        """
+        return "Learn the Topology"
+    
+    #
+    # Mandatory method: given a process id, create and return the initial state of that process.
+    #
     def initial_state(self, pid) -> State:
         return LearnState(
             pid=pid,
@@ -56,14 +81,17 @@ class LearnGraphAlgorithm(Algorithm):
             has_started=False,
         )
     
+    #
+    # Mandatory method:
+    # given the state of a process and an event (signal or message) applied to it,
+    # return the new state of the process and a list of events to be scheduled.
+    #
     def on_event(self, old_state: LearnState, event: Event) -> tuple[LearnState, list[Event]]:
         match event:
             case Start(_) if not old_state.has_started:
                 return self._do_start(old_state)
             case Start(_):
                 return old_state, []
-            # case PositionMsg(_, _, position) if position.origin in old_state.known_processes:
-            #     return old_state, []
             case PositionMsg(_, sender, position):
                 new_state = old_state
                 new_events = []
@@ -102,14 +130,16 @@ class LearnGraphAlgorithm(Algorithm):
                 return new_state, new_events
             case GraphIsKnown(_):
                 # Handle the graph known event
-                # This is where you would handle the event when the graph is known
-                # For example, you might want to stop the algorithm or notify other processes
                 print(f"Graph is known for {old_state.pid}")
                 return old_state, []
             case _:
                 # Handle other events
                 raise NotImplementedError(f"Event {event} not implemented in {self.name}")
             
+    #
+    # Custom method defined for modularity.
+    # Corresponds to the start() method in the pseudo-code of the algorithm.
+    #
     def _do_start(self, state: LearnState) -> tuple[LearnState, list[Event]]:
         """
         Handle the start of the algorithm.

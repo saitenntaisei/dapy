@@ -15,7 +15,7 @@ print("System:")
 print(system)
 
 algorithm = LearnGraphAlgorithm(system)
-print("Algorithm:", algorithm.name())
+print("Algorithm:", algorithm.name)
 print(algorithm)
 
 sim = Simulator.from_system(system, algorithm, settings=settings)
@@ -37,8 +37,6 @@ for timed_event in sim.trace.events_list:
     event = timed_event.event
     print(f"{start} {end} {event}")
 
-print(f"Final configuration (finished: {sim.is_finished()}):")
-print(sim.current_configuration)
-
-
-
+for i in range(len(sim.trace.history)-1):
+    for p in sim.trace.history[i+1].configuration.changed_from(sim.trace.history[i].configuration):
+        print(f"+++ Process {p} changed from config {i} to {i+1}")
