@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 from typing import Iterable
-from .pid import Pid
+from .pid import Pid, ProcessSet
 
 
 @dataclass(frozen=True)
@@ -10,14 +10,14 @@ class NetworkTopology(ABC):
     Abstract class to represent a network topology.
     """
     @abstractmethod
-    def neighbors_of(self, ) -> frozenset[Pid]:
+    def neighbors_of(self, ) -> ProcessSet:
         """
         Given a process identifier (PID), return its neighbors.
         """
         pass
     
     @abstractmethod
-    def processes(self) -> frozenset[Pid]:
+    def processes(self) -> ProcessSet:
         """
         Return the set of processes in the topology.
         """
@@ -28,11 +28,11 @@ class NetworkTopology(ABC):
 class CompleteGraph(NetworkTopology):
     _processes: frozenset[Pid]
     
-    def neighbors_of(self, pid: Pid) -> frozenset[Pid]:
-        return self._processes - {pid}
+    def neighbors_of(self, pid: Pid) -> ProcessSet:
+        return ProcessSet(self._processes - {pid})
 
-    def processes(self) -> frozenset[Pid]:
-        return self._processes
+    def processes(self) -> ProcessSet:
+        return ProcessSet(self._processes)
     
     @classmethod
     def from_(cls, processes: Iterable[Pid]) -> 'CompleteGraph':
@@ -54,17 +54,17 @@ class Ring(NetworkTopology):
     _index: dict[Pid, int] = field()
     directed: bool = field(default=False)
     
-    def neighbors_of(self, pid: Pid) -> frozenset[Pid]:
+    def neighbors_of(self, pid: Pid) -> ProcessSet:
         idx = self._index.get(pid)
         if idx is None:
             raise ValueError(f"Process {pid} not found in the ring topology.")
         if self.directed:
             return frozenset({self._processes[(idx + 1) % len(self._processes)]})
-        return frozenset({self._processes[(idx - 1)], 
+        return ProcessSet({self._processes[(idx - 1)], 
                           self._processes[(idx + 1) % len(self._processes)]})
 
-    def processes(self) -> frozenset[Pid]:
-        return frozenset(self._processes)
+    def processes(self) -> ProcessSet:
+        return ProcessSet(self._processes)
     
     @classmethod
     def from_(cls, processes: Iterable[Pid], directed: bool = False) -> 'Ring':
@@ -93,15 +93,15 @@ class Star(NetworkTopology):
         if self._center in self._leaves:
             raise ValueError("Center cannot be a leaf.")
         
-    def neighbors_of(self, pid: Pid) -> frozenset[Pid]:
+    def neighbors_of(self, pid: Pid) -> ProcessSet:
         if pid == self._center:
             return self._leaves
         if pid in self._leaves:
-            return frozenset({self._center})
+            return ProcessSet(self._center)
         raise ValueError(f"Process {pid} not found in the star topology.")
 
-    def processes(self) -> frozenset[Pid]:
-        return frozenset([self._center]) | self._leaves
+    def processes(self) -> ProcessSet:
+        return ProcessSet({self._center} | self._leaves)
     
     @classmethod
     def from_(cls, center: Pid, leaves: Iterable[Pid]) -> 'Star':
@@ -119,10 +119,3 @@ class Star(NetworkTopology):
         leaves = (Pid(i+2) for i in range(size - 1))
         return cls.from_(center, leaves)
 
-
-if __name__ == "__main__":
-    # Example usage
-    topology = Ring.from_({Pid(1), Pid(2), Pid(3)}, directed=True)
-    print(topology.neighbors_of(Pid(1)))
-    print(topology.processes())
-    print(topology.neighbors_of(Pid(3)))
