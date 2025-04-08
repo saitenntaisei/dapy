@@ -7,7 +7,7 @@ from ..core import Pid, State
 class Configuration:
     states: dict[Pid, State]
 
-    def updated(self, states: Iterable[State]) -> 'Configuration':
+    def updated(self, states: Iterable[State]) -> Self:
         """
         Create a new configuration with updated states.
         """
@@ -52,7 +52,7 @@ class Configuration:
         return len(self.states)
 
     @classmethod
-    def from_states(cls, states: Iterable[State]) -> 'Configuration':
+    def from_states(cls, states: Iterable[State]) -> Self:
         """
         Create a configuration from a list of states.
         """

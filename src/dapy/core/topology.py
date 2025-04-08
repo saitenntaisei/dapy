@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Iterable, Self
 from .pid import Pid, ProcessSet
 
 
@@ -35,11 +35,11 @@ class CompleteGraph(NetworkTopology):
         return ProcessSet(self._processes)
     
     @classmethod
-    def from_(cls, processes: Iterable[Pid]) -> 'CompleteGraph':
+    def from_(cls, processes: Iterable[Pid]) -> Self:
         return cls(frozenset(processes))
     
     @classmethod
-    def of_size(cls, size: int) -> 'CompleteGraph':
+    def of_size(cls, size: int) -> Self:
         """
         Create a complete graph topology with the given size.
         """
@@ -67,13 +67,13 @@ class Ring(NetworkTopology):
         return ProcessSet(self._processes)
     
     @classmethod
-    def from_(cls, processes: Iterable[Pid], directed: bool = False) -> 'Ring':
+    def from_(cls, processes: Iterable[Pid], directed: bool = False) -> Self:
         processes = sorted(set(processes))
         index = {pid: i for i, pid in enumerate(processes)}
         return cls(processes, index, directed)
     
     @classmethod
-    def of_size(cls, size: int, directed: bool = False) -> 'Ring':
+    def of_size(cls, size: int, directed: bool = False) -> Self:
         """
         Create a ring topology with the given size.
         """
@@ -104,12 +104,12 @@ class Star(NetworkTopology):
         return ProcessSet({self._center} | self._leaves)
     
     @classmethod
-    def from_(cls, center: Pid, leaves: Iterable[Pid]) -> 'Star':
+    def from_(cls, center: Pid, leaves: Iterable[Pid]) -> Self:
         leaves = frozenset(leaves)
         return cls(center, leaves)
     
     @classmethod
-    def of_size(cls, size: int) -> 'Star':
+    def of_size(cls, size: int) -> Self:
         """
         Create a star topology with the given size.
         """
