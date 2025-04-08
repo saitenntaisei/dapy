@@ -22,6 +22,21 @@ class NetworkTopology(ABC):
         Return the set of processes in the topology.
         """
         pass
+    
+    def __len__(self) -> int:
+        # default implementation; expected to be overridden in subclasses
+        # for the sake of performance
+        return len(self.processes())
+
+    def __contains__(self, pid: Pid) -> bool:
+        # default implementation; expected to be overridden in subclasses
+        # for the sake of performance
+        return pid in self.processes()
+    
+    def __iter__(self):
+        # default implementation; expected to be overridden in subclasses
+        # for the sake of performance
+        return iter(self.processes())
 
 
 @dataclass(frozen=True)
@@ -34,6 +49,13 @@ class CompleteGraph(NetworkTopology):
     def processes(self) -> ProcessSet:
         return ProcessSet(self._processes)
     
+    def __len__(self):
+        return len(self._processes)
+    def __contains__(self, pid: Pid) -> bool:
+        return pid in self._processes
+    def __iter__(self):
+        return iter(self._processes)
+
     @classmethod
     def from_(cls, processes: Iterable[Pid]) -> Self:
         return cls(frozenset(processes))
@@ -65,7 +87,14 @@ class Ring(NetworkTopology):
 
     def processes(self) -> ProcessSet:
         return ProcessSet(self._processes)
-    
+
+    def __len__(self):
+        return len(self._processes)
+    def __contains__(self, pid: Pid) -> bool:
+        return pid in self._processes
+    def __iter__(self):
+        return iter(self._processes)
+        
     @classmethod
     def from_(cls, processes: Iterable[Pid], directed: bool = False) -> Self:
         processes = sorted(set(processes))
@@ -102,7 +131,14 @@ class Star(NetworkTopology):
 
     def processes(self) -> ProcessSet:
         return ProcessSet({self._center} | self._leaves)
-    
+
+    def __len__(self):
+        return 1 + len(self._leaves)
+    def __contains__(self, pid: Pid) -> bool:
+        return pid == self._center or pid in self._leaves
+    def __iter__(self):
+        return iter({self._center} | self._leaves)
+        
     @classmethod
     def from_(cls, center: Pid, leaves: Iterable[Pid]) -> Self:
         leaves = frozenset(leaves)
