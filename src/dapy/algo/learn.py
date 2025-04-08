@@ -76,7 +76,7 @@ class LearnGraphAlgorithm(Algorithm):
                     # (8) proc_known_i := proc_known_i ∪ {id}
                     # (9) channels_known_i := channel_known_i ∪ {<id, id_k> | id_k in neighbors>}
                     # add the new position to the state
-                    new_state = new_state.copy(
+                    new_state = new_state.cloned_with(
                         known_processes=new_state.known_processes + position.origin,
                         known_channels=new_state.known_channels + ChannelSet( Channel(position.origin, neighbor) for neighbor in position.neighbors ),
                     )
@@ -119,7 +119,7 @@ class LearnGraphAlgorithm(Algorithm):
             PositionMsg(target=neighbor, sender=state.own.origin, position=state.own)
             for neighbor in state.own.neighbors
         ]
-        state = state.copy(
+        state = state.cloned_with(
             known_processes=ProcessSet(state.own.origin),
             known_channels=ChannelSet( Channel(state.own.origin, neighbor) for neighbor in state.own.neighbors ),
             has_started=True,

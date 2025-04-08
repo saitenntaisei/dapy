@@ -11,7 +11,7 @@ class State(ABC):
     """
     pid: Pid
     
-    def copy(self, **kwargs) -> Self:
+    def cloned_with(self, **kwargs) -> Self:
         """
         Create a copy of the state with updated attributes.
         """
