@@ -1,6 +1,21 @@
-from .pid import Pid, ProcessSet, Channel, ChannelSet
-from .event import Event, Signal, Message
-from .algorithm import Algorithm, State
-from .topology import NetworkTopology, CompleteGraph, Ring, Star
-from .system import SynchronyModel, System, SynchronyType, Synchronous, Asynchronous, PartiallySynchronous, StochasticExponential
-from .state import State
+# re-exports
+from .pid import Pid as Pid
+from .pid import ProcessSet as ProcessSet
+from .pid import Channel as Channel
+from .pid import ChannelSet as ChannelSet
+from .event import Event as Event
+from .event import Signal as Signal
+from .event import Message as Message
+from .algorithm import Algorithm as Algorithm
+from .topology import NetworkTopology as NetworkTopology
+from .topology import CompleteGraph as CompleteGraph
+from .topology import Ring as Ring
+from .topology import Star as Star
+from .system import SynchronyModel as SynchronyModel
+from .system import System as System
+from .system import SynchronyType as SynchronyType
+from .system import Synchronous as Synchronous
+from .system import Asynchronous as Asynchronous
+from .system import PartiallySynchronous as PartiallySynchronous
+from .system import StochasticExponential as StochasticExponential
+from .state import State as State
