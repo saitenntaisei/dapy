@@ -1,7 +1,7 @@
 import pytest
 from typing import Optional
 
-from dapy.core.topology import *
+from dapy.core.topology import Pid, ProcessSet, NetworkTopology, CompleteGraph, Ring, Star
 
 def _all_processes_are_present(topology: NetworkTopology, processes: ProcessSet):
     """
@@ -31,9 +31,7 @@ def _check_any_topology(topology: NetworkTopology, size: int, processes: Optiona
     _all_processes_are_present(topology, processes)
     _no_process_is_its_own_neighbor(topology)
     
-    
-    
-def _check_ring(topology: Ring, size: int, processes: Optional[ProcessSet] = None):
+def _check_ring_validity(topology: Ring, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     
@@ -46,7 +44,7 @@ def _check_ring(topology: Ring, size: int, processes: Optional[ProcessSet] = Non
         assert len(topology.neighbors_of(pid)) == 2
         assert topology.neighbors_of(pid) == ProcessSet({prev, next})
 
-def _check_complete_graph(topology: CompleteGraph, size: int, processes: Optional[ProcessSet] = None):
+def _check_complete_graph_validity(topology: CompleteGraph, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     # Check the neighbors of each process
@@ -54,7 +52,7 @@ def _check_complete_graph(topology: CompleteGraph, size: int, processes: Optiona
         assert len(topology.neighbors_of(pid)) == size - 1
         assert topology.neighbors_of(pid) + {pid} == topology.processes()
 
-def _check_star(topology: Star, size: int, processes: Optional[ProcessSet] = None):
+def _check_star_validity(topology: Star, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     # Check the neighbors of each process
@@ -75,12 +73,12 @@ def test_ring():
         # Create a ring topology with 4 processes
         topology = Ring.of_size(size)
         _check_any_topology(topology, size)
-        _check_ring(topology, size)
+        _check_ring_validity(topology, size)
     
     processes = ProcessSet({Pid(10), Pid(20), Pid(30)})
     topology = Ring.from_(processes)
     _check_any_topology(topology, 3, processes)
-    _check_ring(topology, 3, processes)
+    _check_ring_validity(topology, 3, processes)
 
 
 def test_complete_graph():
@@ -91,16 +89,16 @@ def test_complete_graph():
         # Create a complete graph topology with 4 processes
         topology = CompleteGraph.of_size(size)
         _check_any_topology(topology, size)
-        _check_complete_graph(topology, size)
+        _check_complete_graph_validity(topology, size)
 
     topology = CompleteGraph.from_([Pid(1), Pid(2), Pid(3)])
     _check_any_topology(topology, 3)
-    _check_complete_graph(topology, 3)
+    _check_complete_graph_validity(topology, 3)
     
     processes = ProcessSet({Pid(10), Pid(20), Pid(30)})
     topology = CompleteGraph.from_(processes)
     _check_any_topology(topology, 3, processes)
-    _check_complete_graph(topology, 3, processes)
+    _check_complete_graph_validity(topology, 3, processes)
     
 
 def test_star():
@@ -111,11 +109,16 @@ def test_star():
         # Create a star topology with 4 processes
         topology = Star.of_size(size)
         _check_any_topology(topology, size)
-        _check_star(topology, size)
+        _check_star_validity(topology, size)
     
     process_list = [Pid(10), Pid(20), Pid(30), Pid(40)]
     processes = ProcessSet(process_list)
     topology = Star.from_(process_list[0], process_list[1:])
     _check_any_topology(topology, 4, processes)
-    _check_star(topology, 4, processes)
+    _check_star_validity(topology, 4, processes)
 
+    with pytest.raises(ValueError):
+        topology = Star.from_(process_list[0], process_list)
+    with pytest.raises(ValueError):
+        # Star topology must have at least 2 leaves
+        topology = Star.from_(process_list[0], process_list[1:1])
