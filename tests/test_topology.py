@@ -33,7 +33,7 @@ def _check_any_topology(topology: NetworkTopology, size: int, processes: Optiona
     
     
     
-def _check_ring(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+def _check_ring(topology: Ring, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     
@@ -46,7 +46,7 @@ def _check_ring(topology: NetworkTopology, size: int, processes: Optional[Proces
         assert len(topology.neighbors_of(pid)) == 2
         assert topology.neighbors_of(pid) == ProcessSet({prev, next})
 
-def _check_complete_graph(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+def _check_complete_graph(topology: CompleteGraph, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     # Check the neighbors of each process
@@ -54,17 +54,17 @@ def _check_complete_graph(topology: NetworkTopology, size: int, processes: Optio
         assert len(topology.neighbors_of(pid)) == size - 1
         assert topology.neighbors_of(pid) + {pid} == topology.processes()
 
-def _check_star(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+def _check_star(topology: Star, size: int, processes: Optional[ProcessSet] = None):
     if processes is None:
         processes = ProcessSet( Pid(i+1) for i in range(size))
     # Check the neighbors of each process
     for pid in processes:
-        if pid == Pid(1):
+        if pid == topology.center():
             assert len(topology.neighbors_of(pid)) == size - 1
             assert topology.neighbors_of(pid) + {pid} == topology.processes()
         else:
             assert len(topology.neighbors_of(pid)) == 1
-            assert topology.neighbors_of(pid) == ProcessSet({Pid(1)})
+            assert topology.neighbors_of(pid) == ProcessSet(topology.center())
 
 def test_ring():
     """
@@ -112,4 +112,10 @@ def test_star():
         topology = Star.of_size(size)
         _check_any_topology(topology, size)
         _check_star(topology, size)
+    
+    process_list = [Pid(10), Pid(20), Pid(30), Pid(40)]
+    processes = ProcessSet(process_list)
+    topology = Star.from_(process_list[0], process_list[1:])
+    _check_any_topology(topology, 4, processes)
+    _check_star(topology, 4, processes)
 

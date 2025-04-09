@@ -37,6 +37,7 @@ class NetworkTopology(ABC):
         # default implementation; expected to be overridden in subclasses
         # for the sake of performance
         return iter(self.processes())
+    
 
 
 @dataclass(frozen=True)
@@ -122,6 +123,9 @@ class Star(NetworkTopology):
         if self._center in self._leaves:
             raise ValueError("Center cannot be a leaf.")
         
+    def center(self) -> Pid:
+        return self._center
+    
     def neighbors_of(self, pid: Pid) -> ProcessSet:
         if pid == self._center:
             return ProcessSet(self._leaves)
