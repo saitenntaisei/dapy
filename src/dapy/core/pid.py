@@ -88,6 +88,12 @@ class Channel:
             return hash((self.s, self.r))
         else:
             return hash(self.normalized())
+    
+    def as_tuple(self) -> tuple[Pid, Pid]:
+        """
+        Return the channel as a tuple of PIDs.
+        """
+        return (self.s, self.r)
         
     def normalized(self) -> tuple[Pid, Pid]:
         """
