@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from dapy.core import ProcessSet, Event
 from dapy.core import ProcessSet, ChannelSet, Channel
-from dapy.core import Algorithm
+from dapy.core import Algorithm, Event
 from dapy.algo.learn import Start, PositionMsg, GraphIsKnown, LearnState
 
 #
