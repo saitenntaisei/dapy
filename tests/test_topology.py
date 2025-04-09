@@ -1,4 +1,5 @@
 import pytest
+from typing import Optional
 
 from dapy.core.topology import *
 
@@ -17,6 +18,53 @@ def _no_process_is_its_own_neighbor(topology: NetworkTopology):
     for pid in topology:
         assert pid not in topology.neighbors_of(pid)
 
+def _check_any_topology(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+    if processes is None:
+        processes = ProcessSet( Pid(i+1) for i in range(size))
+    assert topology.processes() == processes
+    assert len(topology) == size
+    assert len(topology.processes()) == size
+    assert Pid(min(processes).id-1) not in topology
+    assert min(processes) in topology
+    assert max(processes) in topology
+    assert Pid(max(processes).id+1) not in topology
+    _all_processes_are_present(topology, processes)
+    _no_process_is_its_own_neighbor(topology)
+    
+    
+    
+def _check_ring(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+    if processes is None:
+        processes = ProcessSet( Pid(i+1) for i in range(size))
+    
+    indexed_processes = list(processes)
+    
+    # Check the neighbors of each process
+    for i, pid in enumerate(processes):
+        prev = indexed_processes[i-1]
+        next = indexed_processes[(i+1)%size]
+        assert len(topology.neighbors_of(pid)) == 2
+        assert topology.neighbors_of(pid) == ProcessSet({prev, next})
+
+def _check_complete_graph(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+    if processes is None:
+        processes = ProcessSet( Pid(i+1) for i in range(size))
+    # Check the neighbors of each process
+    for pid in processes:
+        assert len(topology.neighbors_of(pid)) == size - 1
+        assert topology.neighbors_of(pid) + {pid} == topology.processes()
+
+def _check_star(topology: NetworkTopology, size: int, processes: Optional[ProcessSet] = None):
+    if processes is None:
+        processes = ProcessSet( Pid(i+1) for i in range(size))
+    # Check the neighbors of each process
+    for pid in processes:
+        if pid == Pid(1):
+            assert len(topology.neighbors_of(pid)) == size - 1
+            assert topology.neighbors_of(pid) + {pid} == topology.processes()
+        else:
+            assert len(topology.neighbors_of(pid)) == 1
+            assert topology.neighbors_of(pid) == ProcessSet({Pid(1)})
 
 def test_ring():
     """
@@ -26,25 +74,13 @@ def test_ring():
         size = 4
         # Create a ring topology with 4 processes
         topology = Ring.of_size(size)
-        processes = ProcessSet( Pid(i+1) for i in range(size))
-        
-        assert topology.processes() == processes
-        assert len(topology) == size
-        assert len(topology.processes()) == size
-        assert Pid(0) not in topology
-        assert Pid(1) in topology
-        assert Pid(size) in topology
-        assert Pid(size+1) not in topology
-        
-        _all_processes_are_present(topology, processes)
-        _no_process_is_its_own_neighbor(topology)
-        
-        # Check the neighbors of each process
-        for pid in processes:
-            prev = Pid(size) if pid == Pid(1) else Pid(pid.id - 1)
-            next = Pid(1) if pid == Pid(size) else Pid(pid.id + 1)
-            assert len(topology.neighbors_of(pid)) == 2
-            assert topology.neighbors_of(pid) == ProcessSet({prev, next})
+        _check_any_topology(topology, size)
+        _check_ring(topology, size)
+    
+    processes = ProcessSet({Pid(10), Pid(20), Pid(30)})
+    topology = Ring.from_(processes)
+    _check_any_topology(topology, 3, processes)
+    _check_ring(topology, 3, processes)
 
 
 def test_complete_graph():
@@ -54,25 +90,19 @@ def test_complete_graph():
     for size in [2, 4, 9]:
         # Create a complete graph topology with 4 processes
         topology = CompleteGraph.of_size(size)
-        processes = ProcessSet( Pid(i+1) for i in range(size))
-        
-        assert topology.processes() == processes
-        assert len(topology) == size
-        assert len(topology.processes()) == size
-        assert Pid(0) not in topology
-        assert Pid(1) in topology
-        assert Pid(size) in topology
-        assert Pid(size+1) not in topology
+        _check_any_topology(topology, size)
+        _check_complete_graph(topology, size)
 
-        _all_processes_are_present(topology, processes)
-        _no_process_is_its_own_neighbor(topology)
-        
-        # Check the neighbors of each process
-        for pid in processes:
-            assert len(topology.neighbors_of(pid)) == size - 1
-            assert topology.neighbors_of(pid) + {pid} == topology.processes()
+    topology = CompleteGraph.from_([Pid(1), Pid(2), Pid(3)])
+    _check_any_topology(topology, 3)
+    _check_complete_graph(topology, 3)
+    
+    processes = ProcessSet({Pid(10), Pid(20), Pid(30)})
+    topology = CompleteGraph.from_(processes)
+    _check_any_topology(topology, 3, processes)
+    _check_complete_graph(topology, 3, processes)
+    
 
-        
 def test_star():
     """
     Test the Star topology.
@@ -80,24 +110,6 @@ def test_star():
     for size in [2, 4, 9]:
         # Create a star topology with 4 processes
         topology = Star.of_size(size)
-        processes = ProcessSet( Pid(i+1) for i in range(size))
-        
-        assert topology.processes() == processes
-        assert len(topology) == size
-        assert len(topology.processes()) == size
-        assert Pid(0) not in topology
-        assert Pid(1) in topology
-        assert Pid(size) in topology
-        assert Pid(size+1) not in topology
+        _check_any_topology(topology, size)
+        _check_star(topology, size)
 
-        _all_processes_are_present(topology, processes)
-        _no_process_is_its_own_neighbor(topology)
-        
-        # Check the neighbors of each process
-        for pid in processes:
-            if pid == Pid(1):
-                assert len(topology.neighbors_of(pid)) == size - 1
-                assert topology.neighbors_of(pid) + {pid} == topology.processes()
-            else:
-                assert len(topology.neighbors_of(pid)) == 1
-                assert topology.neighbors_of(pid) == ProcessSet({Pid(1)})
