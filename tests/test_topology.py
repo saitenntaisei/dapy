@@ -73,3 +73,31 @@ def test_complete_graph():
             assert topology.neighbors_of(pid) + {pid} == topology.processes()
 
         
+def test_star():
+    """
+    Test the Star topology.
+    """
+    for size in [2, 4, 9]:
+        # Create a star topology with 4 processes
+        topology = Star.of_size(size)
+        processes = ProcessSet( Pid(i+1) for i in range(size))
+        
+        assert topology.processes() == processes
+        assert len(topology) == size
+        assert len(topology.processes()) == size
+        assert Pid(0) not in topology
+        assert Pid(1) in topology
+        assert Pid(size) in topology
+        assert Pid(size+1) not in topology
+
+        _all_processes_are_present(topology, processes)
+        _no_process_is_its_own_neighbor(topology)
+        
+        # Check the neighbors of each process
+        for pid in processes:
+            if pid == Pid(1):
+                assert len(topology.neighbors_of(pid)) == size - 1
+                assert topology.neighbors_of(pid) + {pid} == topology.processes()
+            else:
+                assert len(topology.neighbors_of(pid)) == 1
+                assert topology.neighbors_of(pid) == ProcessSet({Pid(1)})

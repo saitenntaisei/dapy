@@ -124,7 +124,7 @@ class Star(NetworkTopology):
         
     def neighbors_of(self, pid: Pid) -> ProcessSet:
         if pid == self._center:
-            return self._leaves
+            return ProcessSet(self._leaves)
         if pid in self._leaves:
             return ProcessSet(self._center)
         raise ValueError(f"Process {pid} not found in the star topology.")
