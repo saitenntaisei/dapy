@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
 from typing import Iterable, Self
-from .pid import Pid, ProcessSet
+from .pid import Pid, ProcessSet, Channel
 
 
 @dataclass(frozen=True)
@@ -159,3 +159,36 @@ class Star(NetworkTopology):
         leaves = (Pid(i+2) for i in range(size - 1))
         return cls.from_(center, leaves)
 
+
+@dataclass(frozen=True)
+class Arbitrary(NetworkTopology):
+    _neighbors: dict[Pid, ProcessSet]
+    _processes: ProcessSet = field(init=False)
+    
+    def __post_init__(self):
+        object.__setattr__(self, '_processes', ProcessSet(self._neighbors.keys()))
+        
+    def neighbors_of(self, pid: Pid) -> ProcessSet:
+        return self._neighbors.get(pid, ProcessSet())
+    
+    def processes(self) -> ProcessSet:
+        return self._processes
+    
+    @classmethod
+    def from_(cls, channels: Iterable[Pid | tuple[Pid, Pid] | Channel], directed: bool = True) -> Self:
+        neighbors: dict[Pid, ProcessSet] = {}
+        for entry in channels:
+            if isinstance(entry, Pid):
+                neighbors.setdefault(entry, ProcessSet())
+            else:
+                if isinstance(entry, Channel):
+                    s, r = entry.as_tuple()
+                else:
+                    s, r = entry
+                neighbors.setdefault(s, ProcessSet())
+                neighbors[s] = neighbors[s] + r
+                if not directed:
+                    neighbors.setdefault(r, ProcessSet())
+                    neighbors[r] = neighbors[r] + s
+                    
+        return cls(neighbors)

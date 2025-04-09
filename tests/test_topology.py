@@ -1,7 +1,7 @@
 import pytest
 from typing import Optional
 
-from dapy.core.topology import Pid, ProcessSet, NetworkTopology, CompleteGraph, Ring, Star
+from dapy.core.topology import Pid, ProcessSet, Channel, NetworkTopology, CompleteGraph, Ring, Star, Arbitrary
 
 def _all_processes_are_present(topology: NetworkTopology, processes: ProcessSet):
     """
@@ -122,3 +122,63 @@ def test_star():
     with pytest.raises(ValueError):
         # Star topology must have at least 2 leaves
         topology = Star.from_(process_list[0], process_list[1:1])
+
+def test_arbitrary():
+    """
+    Test the Arbitrary topology.
+    """
+    # Create an unconnected topology with 3 processes
+    processes = ProcessSet({Pid(1), Pid(2), Pid(3)})
+    topology = Arbitrary.from_(processes)
+    _check_any_topology(topology, 3, processes)
+    for pid in processes:
+        assert topology.neighbors_of(pid) == ProcessSet()
+        
+    # Create a directed ring of 3 processes from tuples
+    processes = ProcessSet({Pid(1), Pid(2), Pid(3)})
+    channels = [
+        (Pid(1), Pid(2)),
+        (Pid(2), Pid(3)),
+        (Pid(3), Pid(1)),
+    ]
+    topology = Arbitrary.from_(channels)
+    _check_any_topology(topology, 3, processes)
+    for pid in processes:
+        assert len(topology.neighbors_of(pid)) == 1
+        assert topology.neighbors_of(pid) == ProcessSet({Pid((pid.id % 3) + 1)})
+
+    # Create an undirected ring of 3 processes from tuples
+    processes = ProcessSet({Pid(1), Pid(2), Pid(3)})
+    channels = [
+        (Pid(1), Pid(2)),
+        (Pid(2), Pid(3)),
+        (Pid(3), Pid(1)),
+    ]
+    topology = Arbitrary.from_(channels, directed=False)
+    _check_any_topology(topology, 3, processes)
+    _check_ring_validity(topology, 3, processes)
+
+    # Create an undirected ring of 3 processes from channels
+    processes = ProcessSet({Pid(1), Pid(2), Pid(3)})
+    channels = [
+        Channel(Pid(1), Pid(2)),
+        Channel(Pid(2), Pid(3)),
+        Channel(Pid(3), Pid(1)),
+    ]
+    topology = Arbitrary.from_(channels, directed=False)
+    _check_any_topology(topology, 3, processes)
+    _check_ring_validity(topology, 3, processes)
+    
+    # Create an undirected ring of 3 processes from mixed objects
+    processes = ProcessSet({Pid(1), Pid(2), Pid(3)})
+    channels = [
+        Pid(1),
+        Pid(2),
+        Channel(Pid(1), Pid(2)),
+        (Pid(2), Pid(3)),
+        Channel(Pid(3), Pid(1)),
+    ]
+    topology = Arbitrary.from_(channels, directed=False)
+    _check_any_topology(topology, 3, processes)
+    _check_ring_validity(topology, 3, processes)
+    
