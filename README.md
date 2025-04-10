@@ -44,3 +44,6 @@ To use the environment, please follow the following steps:
 Look at the two parts annotated example that explains:
 * [How to write an algorithm](docs/sample-algorithm.md)
 * [How to define an execution](docs/sample-execution.md)
+
+You can also check the following code template:
+* [`examples/template.py`](examples/template.py)
