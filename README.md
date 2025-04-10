@@ -1,5 +1,10 @@
 # Dapy: Distributed Algorithms in Python
 
+<p style="font-style:italic">
+IMPORTANT:
+This project is in a very early stage of development; use at your own risks.
+</p>
+
 ## Description
 
 This is a simple (simplistic) programming framework to simulate the execution of distributed algorithms.
