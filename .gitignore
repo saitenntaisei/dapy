@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# MacOS metafiles
+.DS_Store
+# Windows thumbnail cache files
+Thumbs.db
