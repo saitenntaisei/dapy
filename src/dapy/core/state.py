@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 from abc import ABC
-from typing import Self, Iterable, Optional
+from dataclasses import dataclass
+from typing import Iterable, Optional, Self
+
 from .pid import Pid
 
 

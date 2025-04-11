@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field
 from abc import ABC
+from dataclasses import dataclass, field
+
 from .pid import Pid
 
 

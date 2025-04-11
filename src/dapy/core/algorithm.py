@@ -1,9 +1,10 @@
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from .pid import Pid
-from .system import System
+from dataclasses import dataclass
+
 from .event import Event
+from .pid import Pid
 from .state import State
+from .system import System
 
 
 @dataclass(frozen=True)

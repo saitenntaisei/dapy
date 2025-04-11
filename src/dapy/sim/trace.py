@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Iterable
 
-from ..core import Pid, Event, Message, Signal, System, Algorithm
+from ..core import Algorithm, Event, Message, Pid, Signal, System
 from .configuration import Configuration
 from .timed import TimedConfiguration
 

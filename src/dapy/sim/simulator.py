@@ -1,12 +1,13 @@
+import heapq
+
 from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Optional
-import heapq
 
-from ..core import System, Algorithm, Event, Message
+from ..core import Algorithm, Event, Message, System
 from .configuration import Configuration
-from .timed import TimedEvent 
 from .settings import Settings
+from .timed import TimedEvent
 from .trace import Trace
 
 

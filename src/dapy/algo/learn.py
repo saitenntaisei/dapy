@@ -3,7 +3,8 @@ This module implements the "Learn the Topology" algorithm, from the .
 """
 
 from dataclasses import dataclass, field
-from ..core import Pid, ProcessSet, Channel, ChannelSet, Event, Signal, Message, Algorithm, State
+
+from ..core import Algorithm, Channel, ChannelSet, Event, Message, Pid, ProcessSet, Signal, State
 
 
 #

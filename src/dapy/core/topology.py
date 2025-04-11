@@ -1,7 +1,8 @@
-from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Iterable, Self
-from .pid import Pid, ProcessSet, Channel
+
+from .pid import Channel, Pid, ProcessSet
 
 
 @dataclass(frozen=True)

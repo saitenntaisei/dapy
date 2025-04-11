@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from abc import ABC
+from dataclasses import dataclass
 from datetime import timedelta
 
 from ..core import Event
