@@ -17,13 +17,16 @@ class Algorithm(ABC):
             The system in which the algorithm is executed.
             
     Methods:
-        name: str (@property)
+        name: str (@property):
             Return the name of the algorithm.
-        initial_state(pid: Pid) -> State
+            
+        initial_state(pid: Pid) -> State:
             Create and return the initial state of the process with the given pid.
-        on_start(init_state: State) -> tuple[State, list[Event]]
+            
+        on_start(init_state: State) -> tuple[State, list[Event]]:
             Handle the start of the algorithm.
-        on_event(old_state: State, event: Event) -> tuple[State, list[Event]]
+            
+        on_event(old_state: State, event: Event) -> tuple[State, list[Event]]:
             Handle an event and return the new state and a list of events to be sent.
     """
     system: System
