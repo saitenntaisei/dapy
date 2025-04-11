@@ -97,10 +97,10 @@
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">        initial_state(pid: Pid) -&gt; State:</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">            Create and return the initial state of the process with the given pid.</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">            </span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        on_start(init_state: State) -&gt; tuple[State, list[Event]]</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        on_start(init_state: State) -&gt; tuple[State, list[Event]]:</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            Handle the start of the algorithm.</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">            </span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        on_event(old_state: State, event: Event) -&gt; tuple[State, list[Event]]</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        on_event(old_state: State, event: Event) -&gt; tuple[State, list[Event]]:</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">            Handle an event and return the new state and a list of events to be sent.</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">system</span><span class="p">:</span> <span class="n">System</span>
@@ -181,10 +181,10 @@
 </span><span id="Algorithm-24"><a href="#Algorithm-24"><span class="linenos">24</span></a><span class="sd">        initial_state(pid: Pid) -&gt; State:</span>
 </span><span id="Algorithm-25"><a href="#Algorithm-25"><span class="linenos">25</span></a><span class="sd">            Create and return the initial state of the process with the given pid.</span>
 </span><span id="Algorithm-26"><a href="#Algorithm-26"><span class="linenos">26</span></a><span class="sd">            </span>
-</span><span id="Algorithm-27"><a href="#Algorithm-27"><span class="linenos">27</span></a><span class="sd">        on_start(init_state: State) -&gt; tuple[State, list[Event]]</span>
+</span><span id="Algorithm-27"><a href="#Algorithm-27"><span class="linenos">27</span></a><span class="sd">        on_start(init_state: State) -&gt; tuple[State, list[Event]]:</span>
 </span><span id="Algorithm-28"><a href="#Algorithm-28"><span class="linenos">28</span></a><span class="sd">            Handle the start of the algorithm.</span>
 </span><span id="Algorithm-29"><a href="#Algorithm-29"><span class="linenos">29</span></a><span class="sd">            </span>
-</span><span id="Algorithm-30"><a href="#Algorithm-30"><span class="linenos">30</span></a><span class="sd">        on_event(old_state: State, event: Event) -&gt; tuple[State, list[Event]]</span>
+</span><span id="Algorithm-30"><a href="#Algorithm-30"><span class="linenos">30</span></a><span class="sd">        on_event(old_state: State, event: Event) -&gt; tuple[State, list[Event]]:</span>
 </span><span id="Algorithm-31"><a href="#Algorithm-31"><span class="linenos">31</span></a><span class="sd">            Handle an event and return the new state and a list of events to be sent.</span>
 </span><span id="Algorithm-32"><a href="#Algorithm-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="Algorithm-33"><a href="#Algorithm-33"><span class="linenos">33</span></a>    <span class="n">system</span><span class="p">:</span> <span class="n">System</span>
@@ -254,10 +254,10 @@ The system in which the algorithm is executed.</li>
   <p>initial_state(pid: Pid) -> State:
       Create and return the initial state of the process with the given pid.</p>
   
-  <p>on_start(init_state: State) -> tuple[State, list[Event]]
+  <p>on_start(init_state: State) -> tuple[State, list[Event]]:
       Handle the start of the algorithm.</p>
   
-  <p>on_event(old_state: State, event: Event) -> tuple[State, list[Event]]
+  <p>on_event(old_state: State, event: Event) -> tuple[State, list[Event]]:
       Handle an event and return the new state and a list of events to be sent.</p>
 </blockquote>
 </div>

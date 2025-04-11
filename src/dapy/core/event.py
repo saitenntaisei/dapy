@@ -9,6 +9,14 @@ class Event(ABC):
     """
     Abstract class to represent an event in the system.
     
+    There are two direct subclasses of this class:
+    
+    - `Signal`: represents a signal event (an event that occurs at a single process).
+    - `Message`: represents a message transmission (an event issued at some process and received at a different target process).
+    
+    This class is not designed to be instantiated directly, but rather
+    by subclassing either one of the two subclasses.
+    
     Attributes:
         target: Pid
             The process identifier (PID) of the process that the event targets.
