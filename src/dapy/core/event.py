@@ -8,6 +8,10 @@ from .pid import Pid
 class Event(ABC):
     """
     Abstract class to represent an event in the system.
+    
+    Attributes:
+        target: Pid
+            The process identifier (PID) of the process that the event targets.
     """
     target: Pid
     
@@ -25,39 +29,42 @@ class Event(ABC):
 class Signal(Event):
     """
     Class to represent a signal event.
+    
+    A signal is an event that occurs internally with respect to a process.
+    A signal can also be generated externally (with respect to the algorithm)
+    and is typically issued at some processes at the initialization of the system.
+    
+    Signals are defined by creating subclasses of this class.
+    The subclass must be frozen (immutable) and can hold additional
+    attributes that are relevant to the signal.
+    
+    A signal can hold additional information in its attributes, but it is not mandatory.
+    Typically, for a given algorithm, it is possible (and encouraged) to define multiple
+    signals, each with an explicit name that makes its purpose clear. This makes it easy
+    to discriminate between different signals in the algorithm using structural pattern
+    matching (`match` statement).
+    
+    Attributes:
+        target: Pid
+            The process identifier (PID) of the process that the signal targets.
     """
 
 @dataclass(frozen=True)
 class Message(Event):
     """
-    Class to represent a receive event.
+    Class to represent a send/receive event.
+    
+    A message is an event that occurs between two processes.
+    The sender and the receiver (target) are both specified.
+    
+    Messages are defined by creating subclasses of this class.
+    The subclass must be frozen (immutable) and can hold additional
+    attributes that are relevant to the message.
+    
+    Attributes:
+        target: Pid
+            The process identifier (PID) of the process that __receives__ the message (i.e, that the message targets).
+        sender: Pid
+            The process identifier (PID) of the process that __sends__ the message.
     """
     sender: Pid
-
-
-
-if __name__ == "__main__":
-    @dataclass(frozen=True, eq=True)
-    class Pos:
-        origin: Pid
-        neighbors: frozenset[Pid] = field(default_factory=frozenset)
-    
-    # Example usage
-    @dataclass(frozen=True)
-    class Start(Signal):
-        pass
-
-    @dataclass(frozen=True)
-    class Position(Message):
-        pos: Pos
-
-
-
-    s = Start(target=Pid(1))
-    print(s)
-    print(s.target)
-
-    p = Position(target=Pid(1), sender=Pid(2), pos=Pos(Pid(1), frozenset({Pid(2), Pid(3)})))
-    print(p)
-    print(p.target)
-    print(p.sender)
