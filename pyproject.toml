@@ -1,3 +1,16 @@
+[build-system]
+requires = [
+    # Support for setup.cfg was added in 30.3.0 by
+    # https://github.com/pypa/setuptools/pull/862
+    # Support for setuptools.build_meta was added in 36.6.0 by
+    # https://github.com/pypa/setuptools/pull/1143
+    'setuptools>=78',
+    # For building wheels
+    'wheel',
+]
+
+
+
 [project]
 name = "dapy"
 version = "0.1.0"
@@ -11,6 +24,8 @@ requires-python = ">=3.11"
 
 keywords = ["distributed", "algorithms", "simulation"]
 
+
+
 [project.urls]
 Repository = "https://github.com/xdefago/dapy.git"
 
@@ -21,6 +36,8 @@ Repository = "https://github.com/xdefago/dapy.git"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+
 
 [tool.pytest.ini_options]
 addopts = [
@@ -71,3 +88,21 @@ fixable = ["ALL"]
 ignore = ["ANN201", "ANN202"]
 # [tool.ruff.lint.pydocstyle]
 # convention = "google"
+
+
+#
+# isort (import sorting)
+# https://pycqa.github.io/isort/docs/configuration/config_files/
+#
+
+[tool.isort]
+known_first_party = 'dapy'
+# For compatibility with black (from black README.md) and
+# https://pycqa.github.io/isort/docs/configuration/profiles/#black
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 100
+lines_between_types = 1
+multi_line_output = 3
+use_parentheses = true
