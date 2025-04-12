@@ -23,7 +23,7 @@ class State(ABC):
         String representation of the state.
         """
         keys = self.__dict__.keys() if keys is None else keys
-        return f"{self.pid}: " + ", ".join(f"{k}={str(self.__dict__.get(k))}" for k in keys if k != "pid")
+        return f"{self.pid}: " + ", ".join(f"{k}={self.__dict__.get(k)!s}" for k in keys if k != "pid")
     
     def __str__(self) -> str:
         """

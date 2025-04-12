@@ -95,8 +95,8 @@ class Channel:
     
     def __repr__(self) -> str:
         if self.directed:
-            return f"{self.__class__.__name__}({repr(self.s)},{repr(self.r)})"
-        return f"{self.__class__.__name__}({repr(self.s)},{repr(self.r)}, directed=False)"
+            return f"{self.__class__.__name__}({self.s!r},{self.r!r})"
+        return f"{self.__class__.__name__}({self.s!r},{self.r!r}, directed=False)"
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Channel):
