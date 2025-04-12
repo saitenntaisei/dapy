@@ -18,17 +18,20 @@ The core components include:
     - `.state.State`: Abstract class to define the state of a process in the distributed system.
 - `.system`:
     - `.system.System`: Represents the distributed system model, including its topology and synchrony model.
-    - `.system.SynchronyModel`: Represents the synchrony model of the distributed system, including asynchronous, partially synchronous, and synchronous models.
-        - `.system.Synchronous`: Represents a synchronous model for the distributed system.
-        - `.system.Asynchronous`: Represents an asynchronous model for the distributed system.
-        - `.system.PartiallySynchronous`: Represents a partially synchronous model for the distributed system.
-        - `.system.StochasticExponential`: Represents a stochastic exponential model for the distributed system.
+    - `.system.SynchronyModel`: Base class to represents a model of synchrony.
+        - `.system.Synchronous`: Represents a **synchronous** model (fixed message delays).
+        - `.system.Asynchronous`: Represents an **asynchronous** model (unpredictable delays).
+        - `.system.PartiallySynchronous`: Represents a **partially synchronous** model
+            (bounded delays after stabilization).
+        - `.system.StochasticExponential`: Represents a stochastic exponential model where transmission
+            delays follow an exponential distribution.
 - `.topology`:
-    - `.topology.NetworkTopology`: Represents the topology of the distributed system, including complete graphs, rings, and stars.
+    - `.topology.NetworkTopology`: Represents the topology of the distributed system.
         - `.topology.CompleteGraph`: Represents a complete graph topology for the distributed system.
         - `.topology.Ring`: Represents a ring topology for the distributed system.
         - `.topology.Star`: Represents a star topology for the distributed system.
-        - `.topology.ArbitraryGraph`: Represents an arbitrary graph topology for the distributed system, represented by an adjacency list.
+        - `.topology.ArbitraryGraph`: Represents an arbitrary graph topology for the distributed system,
+            represented by an adjacency list.
 
 This module is essential for defining distributed algorithms, which is done as follows:
 ```python
