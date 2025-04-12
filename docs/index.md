@@ -1,6 +1,6 @@
 # Dapy: Documentation
 
-The documentation is still very scarce, but you may find the following useful:
+This project is in its infancy; the documentation is still very scarce, but you may find the following useful:
 
 * [`API doc`](api/) generated automatically from the docstrings.
 * [`README.md`]({% link README.md %}) that explains how to generate the docs locally.
