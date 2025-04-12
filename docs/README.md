@@ -1,7 +1,6 @@
 ---
 layout: page
 title: Index page for project dapy
-permalink: /dapy/
 ---
 
 # Documentation
