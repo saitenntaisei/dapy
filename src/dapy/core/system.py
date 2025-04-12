@@ -10,15 +10,6 @@ from .pid import Pid
 from .topology import NetworkTopology
 
 
-class SynchronyType(Enum):
-    """
-    Enum to represent the synchrony of the system.
-    """
-    ASYNCHRONOUS = "asynchronous"
-    SYNCHRONOUS = "synchronous"
-    PARTIALLY_SYNCHRONOUS = "partially synchronous"
-
-
 @dataclass(frozen=True)
 class SynchronyModel(ABC):
     min_delay: timedelta = field(default=timedelta.resolution)
@@ -26,11 +17,6 @@ class SynchronyModel(ABC):
         if self.min_delay < timedelta.resolution:
             raise ValueError("Minimum delay must be strictly positive.")
         
-    @abstractmethod
-    def get_type() -> SynchronyType:
-        """
-        Return the type of synchrony of the system.
-        """
     @abstractmethod
     def arrival_time_for(self, sent_at: time) -> time:
         """
@@ -50,9 +36,6 @@ class Synchronous(SynchronyModel):
         super().__post_init__()
         if self.fixed_delay < self.min_delay:
             raise ValueError("The fixed delay must be at least as great as the minimum delay.")
-        
-    def get_type() -> SynchronyType:
-        return SynchronyType.SYNCHRONOUS
     
     def arrival_time_for(self, sent_at: time) -> time:
         return sent_at + self.fixed_delay
@@ -69,9 +52,6 @@ class Asynchronous(SynchronyModel):
         super().__post_init__()
         if self.base_delay < self.min_delay:
             raise ValueError("Base delay must be at least as great as the minimum delay.")
-        
-    def get_type() -> SynchronyType:
-        return SynchronyType.ASYNCHRONOUS
     
     def arrival_time_for(self, sent_at: time) -> time:
         return sent_at + self.min_delay + self.base_delay * (random.expovariate(lambd=2) + random.uniform(0, 1))
@@ -89,9 +69,6 @@ class PartiallySynchronous(Synchronous):
         super().__post_init__()
         if self.gst < timedelta.resolution:
             raise ValueError("Global synchronization time (GST) must be a positive time.")
-        
-    def get_type() -> SynchronyType:
-        return SynchronyType.PARTIALLY_SYNCHRONOUS
     
     def arrival_time_for(self, sent_at: time) -> time:
         if sent_at < self.gst:
@@ -124,9 +101,6 @@ class StochasticExponential(SynchronyModel):
         super().__post_init__()
         if self.delta_t < timedelta.resolution:
             raise ValueError("Delta time must be strictly positive.")
-        
-    def get_type() -> SynchronyType:
-        return SynchronyType.PARTIALLY_SYNCHRONOUS
     
     def arrival_time_for(self, sent_at: time) -> time:
         return sent_at + self.min_delay + self.delta_t * random.expovariate(lambd=1)

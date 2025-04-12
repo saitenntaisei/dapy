@@ -81,7 +81,6 @@ from .system import PartiallySynchronous as PartiallySynchronous
 from .system import StochasticExponential as StochasticExponential
 from .system import Synchronous as Synchronous
 from .system import SynchronyModel as SynchronyModel
-from .system import SynchronyType as SynchronyType
 from .system import System as System
 from .topology import CompleteGraph as CompleteGraph
 from .topology import NetworkTopology as NetworkTopology
