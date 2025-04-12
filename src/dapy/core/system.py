@@ -44,16 +44,19 @@ class Synchronous(SynchronyModel):
     Class to represent a synchronous system.
     All communication is bounded by a fixed time interval.
     """
-    max_delay: timedelta = field(default=timedelta(milliseconds=1))
+    fixed_delay: timedelta = field(default=timedelta(milliseconds=1))
     
     def __post_init__(self):
         super().__post_init__()
-        if self.max_delay < self.min_delay:
-            raise ValueError("Maximum delay must be at least as great as the minimum delay.")
+        if self.fixed_delay < self.min_delay:
+            raise ValueError("The fixed delay must be at least as great as the minimum delay.")
+        
     def get_type() -> SynchronyType:
         return SynchronyType.SYNCHRONOUS
+    
     def arrival_time_for(self, sent_at: time) -> time:
-        return sent_at + self.min_delay + (self.max_delay - self.min_delay) * random.uniform(0, 1)
+        return sent_at + self.fixed_delay
+
 
 @dataclass(frozen=True)
 class Asynchronous(SynchronyModel):
@@ -66,10 +69,13 @@ class Asynchronous(SynchronyModel):
         super().__post_init__()
         if self.base_delay < self.min_delay:
             raise ValueError("Base delay must be at least as great as the minimum delay.")
+        
     def get_type() -> SynchronyType:
         return SynchronyType.ASYNCHRONOUS
+    
     def arrival_time_for(self, sent_at: time) -> time:
         return sent_at + self.min_delay + self.base_delay * (random.expovariate(lambd=2) + random.uniform(0, 1))
+
 
 @dataclass(frozen=True, kw_only=True)
 class PartiallySynchronous(Synchronous):
@@ -83,18 +89,20 @@ class PartiallySynchronous(Synchronous):
         super().__post_init__()
         if self.gst < timedelta.resolution:
             raise ValueError("Global synchronization time (GST) must be a positive time.")
+        
     def get_type() -> SynchronyType:
         return SynchronyType.PARTIALLY_SYNCHRONOUS
+    
     def arrival_time_for(self, sent_at: time) -> time:
         if sent_at < self.gst:
             # If the message is sent before the global synchronization time (GST),
             match random.choice(["short", "long", "long", "long", "long", "near lost", "near lost", "lost", "lucky"]):
                 case "short":
-                    return sent_at + timedelta(microseconds=0.001) + self.max_delay * random.uniform(0, 2)
+                    return sent_at + timedelta(microseconds=0.001) + self.fixed_delay * random.uniform(0, 2)
                 case "long":
-                    return sent_at + timedelta(microseconds=0.001) + self.max_delay * (1 + random.uniform(0, 1) + random.expovariate(lambd=1/10))
+                    return sent_at + timedelta(microseconds=0.001) + self.fixed_delay * (1 + random.uniform(0, 1) + random.expovariate(lambd=1/10))
                 case "near lost":
-                    return self.gst + timedelta(microseconds=0.001) + self.max_delay * (1_000_000 + random.expovariate(lambd=1/1_000_000))
+                    return self.gst + timedelta(microseconds=0.001) + self.fixed_delay * (1_000_000 + random.expovariate(lambd=1/1_000_000))
                 case "lost":
                     return max(self.gst, timedelta(days=999_999))
                 case "lucky":
@@ -102,6 +110,7 @@ class PartiallySynchronous(Synchronous):
                     return super().arrival_time_for(sent_at)
         else:
             return super().arrival_time_for(sent_at)
+
 
 @dataclass(frozen=True)
 class StochasticExponential(SynchronyModel):
@@ -115,8 +124,10 @@ class StochasticExponential(SynchronyModel):
         super().__post_init__()
         if self.delta_t < timedelta.resolution:
             raise ValueError("Delta time must be strictly positive.")
+        
     def get_type() -> SynchronyType:
         return SynchronyType.PARTIALLY_SYNCHRONOUS
+    
     def arrival_time_for(self, sent_at: time) -> time:
         return sent_at + self.min_delay + self.delta_t * random.expovariate(lambd=1)
 
