@@ -1,3 +1,9 @@
+---
+layout: page
+title: Index page for project dapy
+permalink: /dapy/
+---
+
 # Dapy: Documentation
 
 This project is in its infancy; the documentation is still very scarce, but you may find the following useful:
