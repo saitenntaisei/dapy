@@ -1,5 +1,5 @@
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from .pid import Pid
 
@@ -27,7 +27,7 @@ class Event(ABC):
         """
         String representation of the start signal.
         """
-        other_attributes = ', '.join(f"{k}={str(v)}" for k,v in self.__dict__.items() if k != 'target' and v is not None)
+        other_attributes = ', '.join(f"{k}={v!s}" for k,v in self.__dict__.items() if k != 'target' and v is not None)
         if other_attributes:
             other_attributes = "; " + other_attributes
         return f"{self.__class__.__name__}(@{self.target}{other_attributes})"
