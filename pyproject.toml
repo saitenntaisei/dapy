@@ -85,7 +85,7 @@ select = [
     "RUF", # ruff-specific rules
 ]
 fixable = ["ALL"]
-ignore = ["ANN201", "ANN202"]
+ignore = ["ANN201", "ANN202", "ANN204"]
 # [tool.ruff.lint.pydocstyle]
 # convention = "google"
 
