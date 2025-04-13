@@ -10,7 +10,6 @@ requires = [
 ]
 
 
-
 [project]
 name = "dapy"
 version = "0.1.0"
@@ -24,7 +23,21 @@ requires-python = ">=3.11"
 
 keywords = ["distributed", "algorithms", "simulation"]
 
+dependencies = [
+#     # For JSON serialization
+    "classifiedjson >= 1.1.0",
+]
 
+[project.optional-dependencies]
+test = [
+    "pytest >= 8.2.0",
+]
+lint = [
+    "ruff == 0.11.3",
+]
+dev = [
+    "dev[test,lint]",
+]
 
 [project.urls]
 Repository = "https://github.com/xdefago/dapy.git"
@@ -43,24 +56,6 @@ package-dir = {"" = "src"}
 addopts = [
     "--import-mode=importlib",
 ]
-
-
-
-#
-# Dependencies
-#
-
-[project.optional-dependencies]
-test = [
-    "pytest >= 8.2.0",
-]
-lint = [
-    "ruff == 0.11.3",
-]
-dev = [
-    "dev[test,lint]",
-]
-
 
 
 #
