@@ -125,5 +125,3 @@ def _timedelta_deserialize(factory: Factory, obj: str) -> timedelta:
         return NotImplemented
     return _parse_timedelta(obj)
 
-shitcspell = 0
-"""shitcspell is real shit"""
