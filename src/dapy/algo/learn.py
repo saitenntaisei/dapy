@@ -46,6 +46,7 @@ class LearnGraphAlgorithm(Algorithm):
     """
     This algorithm learns the topology of the network.
     """
+    is_verbose: bool = False
     
     @property
     def name(self) -> str:
@@ -122,7 +123,8 @@ class LearnGraphAlgorithm(Algorithm):
             
             case GraphIsKnown(_):
                 # Handle the graph known event
-                print(f"Graph is known for {old_state.pid}")
+                if self.is_verbose:
+                    print(f"Graph is known for {old_state.pid}")
                 return old_state, []
             
             case _:
