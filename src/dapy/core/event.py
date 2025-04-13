@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from .pid import Pid
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class Event(ABC):
     """
     Abstract class to represent an event in the system.
@@ -31,7 +31,39 @@ class Event(ABC):
         if other_attributes:
             other_attributes = "; " + other_attributes
         return f"{self.__class__.__name__}(@{self.target}{other_attributes})"
-        
+    
+    def __lt__(self, other) -> bool:
+        """
+        Compare two events.
+        """
+        if not isinstance(other, Event):
+            return NotImplemented
+        if self == other:
+            return False
+        return self.target < other.target
+    
+    def __gt__(self, other) -> bool:
+        """
+        Compare two events.
+        """
+        if not isinstance(other, Event):
+            return NotImplemented
+        if self == other:
+            return False
+        return self.target > other.target
+    
+    def __cmp__(self, other) -> int:
+        """
+        Compare two events.
+        """
+        if not isinstance(other, Event):
+            return NotImplemented
+        if self == other:
+            return 0
+        if self.target == other.target:
+            return hash(self).__cmp__(hash(other))
+        return -1 if self.target < other.target else 1
+    
 
 @dataclass(frozen=True)
 class Signal(Event):
