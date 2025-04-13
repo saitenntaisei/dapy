@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Iterable
+from typing import Iterable, Self, Any
 
 from ..core import Algorithm, Event, Message, Pid, Signal, System
 from .configuration import Configuration
@@ -47,7 +47,7 @@ class Trace:
     Class to represent a trace of a simulation.
     """
     system: System
-    algorithm: Algorithm
+    algorithm_name: str
     
     history: list[TimedConfiguration] = field(default_factory=list)
     events_list: list[LocalTimedEvent] = field(default_factory=list)

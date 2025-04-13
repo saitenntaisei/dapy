@@ -27,7 +27,7 @@ class Simulator:
         Initialize the simulator with the given settings.
         """
         if self.settings.enable_trace:
-            self.trace = Trace(system=self.system, algorithm=self.algorithm)
+            self.trace = Trace(system=self.system, algorithm_name=self.algorithm.name)
     
     @classmethod
     def from_system(cls, system: System, algorithm: Algorithm, starting_time: timedelta = timedelta(seconds=0), settings: Settings = Settings()) -> "Simulator":
