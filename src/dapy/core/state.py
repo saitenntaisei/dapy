@@ -1,6 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Iterable, Optional, Self, Any
+from typing import Any, Iterable, Optional, Self
 
 from .pid import Pid
 
