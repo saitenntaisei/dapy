@@ -28,8 +28,9 @@ To use the environment, please follow the following steps:
 
 1. clone this repository.
 1. open a terminal in the root of the cloned project.
-1. if you're using `pyenv` or `venv`, set then appropriately.
-1. install the python package locally using the following `pip` command.
+1. if you're using `pyenv` or `venv`, set them appropriately.
+    You can find instructions about [setting up virtual environment with `venv`](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/). This is a little cumbersome but ensures no conflicts with an existing installation.
+1. then, install the python package locally using the following `pip` command.
     ```shell
     pip install --editable .
     ```
