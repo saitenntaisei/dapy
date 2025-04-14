@@ -76,7 +76,7 @@ class LearnGraphAlgorithm(Algorithm):
             
             # () when Start() is received do
             # (5)     if (not part_i) then start() end if            
-            case Start(_) if not old_state.part_i:
+            case Start(_):
                 if not old_state.part_i:
                     return self._do_start(old_state)
                 else:
