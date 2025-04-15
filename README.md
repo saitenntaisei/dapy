@@ -35,9 +35,7 @@ To use the environment, please follow the following steps:
     pip install --editable .
     ```
     The flag `--editable` informs the `pip` command that the source code may change in the future and that changes should be taken into account. 
-    This ensures that updates (and fixes) are taken into account whenever pulling commits, without requiring a further install.
-    Although `pip` recommends to install this using `venv`, I personally install it on my regular python installation.
-    This may be necessary if the name `dapy` conflicts with an existing package.
+    This ensures that updates (and fixes) are taken into account whenever pulling commits, without requiring a further install. See the note below about [virtual environments](#venv).
 1. check if the install worked properly.
     Still from the root directory of the project, try to run the example as follows:
     ```shell
@@ -53,3 +51,22 @@ Look at the two parts annotated example that explains:
 
 You can also check the following code template:
 * [`examples/template.py`](examples/template.py)
+
+### Optional dependencies
+
+Some additional features are available optionally:
+
+* `json` enables a dump/load of any `Trace` object into a JSON string.
+
+To enable a feature, (re-)install `dapy` using the following command (e.g., for the `json` feature):
+```shell
+pip install --editable ".[json]"
+```
+
+### <a name="venv"></a> About virtual environments
+
+The install warns that installing `dapy` directly may possibly result in dependencies conflicts, but the risk is actually very small in this case, since the package has no mandatory dependencies.
+
+Although `pip` recommends to install this using `venv`, I personally install it on my regular python installation.  
+
+Nevertheless, should you want to protect your environment, you can follow instructions about installing it into a virtual environment, either [using `venv` directly](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) or [using it via `uv`](https://docs.astral.sh/uv/pip/environments/)
