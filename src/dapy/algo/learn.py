@@ -58,7 +58,7 @@ class LearnGraphAlgorithm(Algorithm):
     #
     # Mandatory method: given a process id, create and return the initial state of that process.
     #
-    def initial_state(self, pid) -> LearnState:
+    def initial_state(self, pid: Pid) -> LearnState:
         return LearnState(
             pid=pid,
             neighbors_i=self.system.topology.neighbors_of(pid),

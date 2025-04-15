@@ -2,7 +2,7 @@ import heapq
 
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Self
 
 from ..core import Algorithm, Event, Message, System
 from .configuration import Configuration
@@ -30,7 +30,7 @@ class Simulator:
             self.trace = Trace(system=self.system, algorithm_name=self.algorithm.name)
     
     @classmethod
-    def from_system(cls, system: System, algorithm: Algorithm, starting_time: timedelta = timedelta(seconds=0), settings: Settings = Settings()) -> "Simulator":
+    def from_system(cls, system: System, algorithm: Algorithm, starting_time: timedelta = timedelta(seconds=0), settings: Settings = Settings()) -> Self:
         """
         Create a simulator instance from the given system and algorithm.
         """

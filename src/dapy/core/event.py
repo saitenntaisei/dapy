@@ -1,5 +1,6 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import Self
 
 from .pid import Pid
 
@@ -32,7 +33,7 @@ class Event(ABC):
             other_attributes = "; " + other_attributes
         return f"{self.__class__.__name__}(@{self.target}{other_attributes})"
     
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: Self) -> bool:
         """
         Compare two events.
         """
@@ -42,7 +43,7 @@ class Event(ABC):
             return False
         return self.target < other.target
     
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Self) -> bool:
         """
         Compare two events.
         """
@@ -52,7 +53,7 @@ class Event(ABC):
             return False
         return self.target > other.target
     
-    def __cmp__(self, other) -> int:
+    def __cmp__(self, other: Self) -> int:
         """
         Compare two events.
         """
