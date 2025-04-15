@@ -49,12 +49,12 @@ class ProcessSet:
     def __iter__(self) -> Iterable[Pid]:
         return iter(self.processes)
     
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Self) -> bool:
         if not isinstance(other, ProcessSet):
             return False
         return self.processes == other.processes
     
-    def __add__(self, other) -> Self:
+    def __add__(self, other: Self | Pid | Iterable[Pid]) -> Self:
         if isinstance(other, Pid):
             return ProcessSet(processes=self.processes.union({other}))
         elif isinstance(other, ProcessSet):
@@ -98,7 +98,7 @@ class Channel:
             return f"{self.__class__.__name__}({self.s!r},{self.r!r})"
         return f"{self.__class__.__name__}({self.s!r},{self.r!r}, directed=False)"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Self) -> bool:
         if not isinstance(other, Channel):
             return False
         if self.directed and other.directed:
@@ -106,7 +106,7 @@ class Channel:
         else:
             return self.normalized() == other.normalized()
         
-    def __cmp__(self, other) -> int:
+    def __cmp__(self, other: Self) -> int:
         if not isinstance(other, Channel):
             raise TypeError("Cannot compare Channel with non-Channel object")
         if self.directed and other.directed:
@@ -174,12 +174,12 @@ class ChannelSet:
     def __iter__(self) -> Iterable[Channel]:
         return iter(self.channels)
     
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Self) -> bool:
         if not isinstance(other, ChannelSet):
             return False
         return self.channels == other.channels
     
-    def __add__(self, other) -> Self:
+    def __add__(self, other: Self | Channel | Iterable[Channel]) -> Self:
         if isinstance(other, Channel):
             return ChannelSet(channels=self.channels.union({other}))
         elif isinstance(other, ChannelSet):
