@@ -25,16 +25,13 @@ keywords = ["distributed", "algorithms", "simulation"]
 
 [project.optional-dependencies]
 json = [ # enables JSON serialization
-    "classifiedjson >= 1.1.0",
+    "classifiedjson >= 1.0.0",
 ]
-test = [
-    "pytest >= 8.2.0",
-]
-lint = [
-    "ruff == 0.11.3",
-]
+test = ["pytest"]
+lint = ["ruff"]
+imports = ["isort"]
 dev = [
-    "dev[test,lint]",
+    "dapy[test,lint,imports,json]",
 ]
 
 [project.urls]
