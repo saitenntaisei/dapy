@@ -33,8 +33,8 @@ def test_trace_generation():
     assert sim.trace.history[-1].time == sim.current_time
     assert sim.current_time == timedelta(seconds=3)
 
-    trace_json = sim.trace.dumps()
-    trace2 = Trace.loads(trace_json)
+    trace_json = sim.trace.dump_json()
+    trace2 = Trace.load_json(trace_json)
     assert trace2 == sim.trace
 
 if __name__ == "__main__":

@@ -65,7 +65,7 @@ class Trace:
         """
         self.history.extend(TimedConfiguration(time, configuration) for time, configuration in history)
 
-    def dumps(self) -> str:
+    def dump_json(self) -> str:
         """
         Serialize the trace to a string.
         """
@@ -85,7 +85,7 @@ class Trace:
         return dumps(self, custom_hooks=[_timedelta_serialize])
 
     @classmethod
-    def loads(cls, data: str) -> Self:
+    def load_json(cls, data: str) -> Self:
         """
         Deserialize the trace from a string.
         """
