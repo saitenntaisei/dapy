@@ -3,7 +3,6 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import time, timedelta
-from enum import Enum
 from typing import Iterable
 
 from .pid import Pid

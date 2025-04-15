@@ -1,7 +1,6 @@
-from dapy.core import Pid
-from dapy.core import Algorithm, State, Event
-from dapy.core import Message, Signal
 from dataclasses import dataclass
+
+from dapy.core import Algorithm, Event, Message, Signal, State
 
 #
 # Define the State of a process in the algorithm.
@@ -99,8 +98,8 @@ if __name__ == "__main__":
     # Algorithm execution
     #
 
-    from dapy.core import System # ...
-    from dapy.sim import Simulator, Settings
+    from dapy.core import System  # ...
+    from dapy.sim import Settings, Simulator
 
     #
     # optionally define settings (e.g. enable trace)

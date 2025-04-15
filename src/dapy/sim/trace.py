@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Any, Iterable, Self
+from typing import Iterable, Self
 
-from ..core import Algorithm, Event, Message, Pid, Signal, System
+from ..core import Event, Message, Pid, Signal, System
 from .configuration import Configuration
 from .timed import TimedConfiguration
 
