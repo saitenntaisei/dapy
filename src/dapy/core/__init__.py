@@ -54,7 +54,8 @@ class MySignal(Signal):
 class MyMessage(Message):
     some_information: str
     
-# 4. Define the distributed algorithm by subclassing the Algorithm class and providing an implementation for the two mandatory abstract methods `initial_state` and `on_event`.
+# 4. Define the distributed algorithm by subclassing the Algorithm class and providing
+#    an implementation for the two mandatory abstract methods `initial_state` and `on_event`.
 @dataclass(frozen=True)
 class MyAlgorithm(Algorithm):
     def initial_state(self, pid) -> MyState:
