@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import time, timedelta
 from typing import Iterable
 
-from .pid import Pid
+from .pid import Pid, ProcessSet
 from .topology import NetworkTopology
 
 
@@ -118,3 +118,9 @@ class System:
         Get the processes in the system.
         """
         return self.topology.processes()
+
+    def neighbors_of(self, pid: Pid) -> ProcessSet:
+        """
+        Get the neighbors of a given process.
+        """
+        return self.topology.neighbors_of(pid)
