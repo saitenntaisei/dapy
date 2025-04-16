@@ -1,13 +1,18 @@
 [build-system]
-requires = [
-    # Support for setup.cfg was added in 30.3.0 by
-    # https://github.com/pypa/setuptools/pull/862
-    # Support for setuptools.build_meta was added in 36.6.0 by
-    # https://github.com/pypa/setuptools/pull/1143
-    'setuptools>=78',
-    # For building wheels
-    'wheel',
-]
+requires = ['setuptools>=78','wheel']
+
+# Commands:
+# - install
+#     `pip install -e .`
+#     `pip install -e ".[dev]"` (for development)
+# - tests
+#     `pytest`
+# - lint
+#     `ruff check src`
+# - imports
+#     `isort src`
+# - api docs
+#     `pdoc -o docs/api -d google src/dapy`
 
 
 [project]
@@ -23,6 +28,8 @@ requires-python = ">=3.11"
 
 keywords = ["distributed", "algorithms", "simulation"]
 
+dependencies = []
+
 [project.optional-dependencies]
 json = [ # enables JSON serialization
     "classifiedjson >= 1.0.0",
@@ -35,7 +42,9 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/xdefago/dapy.git"
+homepage = "https://xdefago.github.io/dapy"
+documentation = "https://xdefago.github.io/dapy/api"
+repository = "https://github.com/xdefago/dapy.git"
 
 
 #
@@ -45,13 +54,14 @@ Repository = "https://github.com/xdefago/dapy.git"
 [tool.setuptools]
 package-dir = {"" = "src"}
 
-
+#
+# Tests
+#
 
 [tool.pytest.ini_options]
 addopts = [
     "--import-mode=importlib",
 ]
-
 
 #
 # Lint
@@ -76,19 +86,15 @@ select = [
 ]
 fixable = ["ALL"]
 ignore = ["ANN201", "ANN202", "ANN204"]
-# [tool.ruff.lint.pydocstyle]
-# convention = "google"
 
 
 #
 # isort (import sorting)
-# https://pycqa.github.io/isort/docs/configuration/config_files/
+# https://pycqa.github.io/isort/
 #
 
 [tool.isort]
 known_first_party = 'dapy'
-# For compatibility with black (from black README.md) and
-# https://pycqa.github.io/isort/docs/configuration/profiles/#black
 ensure_newline_before_comments = true
 force_grid_wrap = 0
 include_trailing_comma = true
