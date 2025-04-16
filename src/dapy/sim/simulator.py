@@ -30,12 +30,23 @@ class Simulator:
             self.trace = Trace(system=self.system, algorithm_name=self.algorithm.name)
     
     @classmethod
-    def from_system(cls, system: System, algorithm: Algorithm, starting_time: timedelta = timedelta(seconds=0), settings: Settings = Settings()) -> Self:
+    def from_system(cls,
+                    system: System,
+                    algorithm: Algorithm,
+                    starting_time: timedelta = timedelta(seconds=0),
+                    settings: Settings = Settings()
+    ) -> Self:
         """
         Create a simulator instance from the given system and algorithm.
         """
         current_configuration = Configuration.from_states( algorithm.initial_state(p) for p in system.processes())
-        return cls(system=system, algorithm=algorithm, current_configuration=current_configuration, current_time=starting_time, settings=settings)       
+        return cls(
+            system=system,
+            algorithm=algorithm,
+            current_configuration=current_configuration,
+            current_time=starting_time,
+            settings=settings
+        )       
     
     def start(self) -> None:
         """

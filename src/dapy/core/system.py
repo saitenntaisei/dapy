@@ -76,9 +76,18 @@ class PartiallySynchronous(Synchronous):
                 case "short":
                     return sent_at + timedelta(microseconds=0.001) + self.fixed_delay * random.uniform(0, 2)
                 case "long":
-                    return sent_at + timedelta(microseconds=0.001) + self.fixed_delay * (1 + random.uniform(0, 1) + random.expovariate(lambd=1/10))
+                    return (
+                        sent_at
+                        + timedelta(microseconds=0.001)
+                        + self.fixed_delay
+                            * (1 + random.uniform(0, 1) + random.expovariate(lambd=1/10))
+                    )
                 case "near lost":
-                    return self.gst + timedelta(microseconds=0.001) + self.fixed_delay * (1_000_000 + random.expovariate(lambd=1/1_000_000))
+                    return (
+                        self.gst
+                        + timedelta(microseconds=0.001)
+                        + self.fixed_delay * (1_000_000 + random.expovariate(lambd=1/1_000_000))
+                    )
                 case "lost":
                     return max(self.gst, timedelta(days=999_999))
                 case "lucky":

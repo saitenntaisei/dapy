@@ -1,6 +1,8 @@
 """
-This module contains the core components of the dapy library, which are used to define distributed algorithms and represent distributed executions.
-The components are defined in multiple files for better organization and maintainability, but the main ones all re-exported here for convenience.
+This module contains the core components of the dapy library, which are used to define
+distributed algorithms and represent distributed executions.
+The components are defined in multiple files for better organization and maintainability,
+but the main ones all re-exported here for convenience.
 
 The core components include:
 - `.algorithm`:

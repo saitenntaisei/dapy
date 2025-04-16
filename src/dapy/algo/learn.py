@@ -98,7 +98,8 @@ class LearnGraphAlgorithm(Algorithm):
                     # add the new position to the state
                     new_state = new_state.cloned_with(
                         proc_known_i=new_state.proc_known_i + id,
-                        channels_known_i=new_state.channels_known_i + ChannelSet( Channel(id, neighbor) for neighbor in neighbors ),
+                        channels_known_i=new_state.channels_known_i +
+                            ChannelSet( Channel(id, neighbor) for neighbor in neighbors ),
                     )
                     # (10) for each id_y in neighbors_i \ {id_x} do
                     # (11)  send POSITION(id, neighbors) to id_y
