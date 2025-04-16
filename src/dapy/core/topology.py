@@ -176,7 +176,10 @@ class Arbitrary(NetworkTopology):
         return self._processes
     
     @classmethod
-    def from_(cls, channels: Iterable[Pid | tuple[Pid, Pid] | Channel], directed: bool = True) -> Self:
+    def from_(cls,
+              channels: Iterable[Pid | tuple[Pid, Pid] | Channel | tuple[int, int]],
+              directed: bool = True
+    ) -> Self:
         neighbors: dict[Pid, ProcessSet] = {}
         for entry in channels:
             if isinstance(entry, Pid):
@@ -184,6 +187,8 @@ class Arbitrary(NetworkTopology):
             else:
                 if isinstance(entry, Channel):
                     s, r = entry.as_tuple()
+                elif isinstance(entry, tuple) and isinstance(entry[0], int) and isinstance(entry[1], int):
+                    s, r = Pid(entry[0]), Pid(entry[1])
                 else:
                     s, r = entry
                 neighbors.setdefault(s, ProcessSet())
