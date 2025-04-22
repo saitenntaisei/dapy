@@ -65,6 +65,24 @@ class Trace:
         """
         self.history.extend(TimedConfiguration(time, configuration) for time, configuration in history)
 
+    def dump_pickle(self) -> bytes:
+        """
+        Serialize the trace to a byte string.
+        """
+        import pickle
+        return pickle.dumps(self)
+    
+    @classmethod
+    def load_pickle(cls, data: bytes) -> Self:
+        """
+        Deserialize the trace from a byte string.
+        """
+        import pickle
+        obj = pickle.loads(data)
+        if not isinstance(obj, cls):
+            raise TypeError(f"Expected Trace, got {type(obj)}")
+        return obj
+
     def dump_json(self) -> str:
         """
         Serialize the trace to a string.

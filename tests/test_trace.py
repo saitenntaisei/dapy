@@ -6,7 +6,7 @@ from dapy.sim import Simulator, Settings, Trace
 from datetime import timedelta
 
 
-def test_trace_generation():
+def generate_trace():
     settings = Settings(enable_trace=True)
     
     # define system, algorithm and simulator
@@ -32,10 +32,25 @@ def test_trace_generation():
     assert sim.trace.history[-1].configuration == sim.current_configuration
     assert sim.trace.history[-1].time == sim.current_time
     assert sim.current_time == timedelta(seconds=3)
+    #
+    return sim.trace
 
-    trace_json = sim.trace.dump_json()
+
+def test_trace_generation_json():
+    trace = generate_trace()
+    
+    trace_json = trace.dump_json()
     trace2 = Trace.load_json(trace_json)
-    assert trace2 == sim.trace
+    assert trace2 == trace
+
+def test_trace_generation_pickle():
+    trace = generate_trace()
+    
+    trace_bytes = trace.dump_pickle()
+    trace2 = Trace.load_pickle(trace_bytes)
+    assert trace2 == trace
+
 
 if __name__ == "__main__":
-    test_trace_generation()
+    test_trace_generation_json()
+    test_trace_generation_pickle()
