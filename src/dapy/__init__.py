@@ -16,10 +16,8 @@ Using this library consists of two main steps:
 2. Simulating the algorithm using the simulation framework.
 """
 
-# Import submodules to make them accessible as dapy.core, dapy.algo, dapy.sim
 from . import core
 from . import algo
 from . import sim
 
-# Make submodules available at package level
 __all__ = ['core', 'algo', 'sim']
